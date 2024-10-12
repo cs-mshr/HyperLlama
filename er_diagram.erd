@@ -1,0 +1,98 @@
+erDiagram
+    User ||--o{ Booking : makes
+    User ||--o| Driver : can_be
+    Vehicle ||--o{ Driver : assigned_to
+    Driver ||--o{ Booking : accepts
+    Driver ||--o{ Location : has
+    Driver ||--|| DriverPerformance : has
+    Booking ||--|| Trip : has
+    Booking ||--o| Feedback : receives
+    Vehicle }|--|| PriceEstimation : has
+
+    User {
+        int id PK
+        string username
+        string email
+        string password
+        string phone_number
+        boolean is_driver
+        boolean is_admin
+    }
+
+    Vehicle {
+        int id PK
+        string type
+        string license_plate
+        float capacity
+        boolean is_available
+    }
+
+    Driver {
+        int id PK
+        int user_id FK
+        int vehicle_id FK
+        string license_number
+        string current_location
+    }
+
+    Booking {
+        int id PK
+        int user_id FK
+        int driver_id FK
+        string vehicle_type
+        string pickup_location
+        string dropoff_location
+        string status
+        datetime created_at
+        datetime updated_at
+        decimal estimated_price
+        decimal actual_price
+    }
+
+    Trip {
+        int id PK
+        int booking_id FK
+        datetime start_time
+        datetime end_time
+        float distance
+    }
+
+    Location {
+        int id PK
+        int driver_id FK
+        decimal latitude
+        decimal longitude
+        datetime timestamp
+    }
+
+    PriceEstimation {
+        int id PK
+        string vehicle_type
+        decimal base_price
+        decimal price_per_km
+        float demand_multiplier
+    }
+
+    DriverPerformance {
+        int id PK
+        int driver_id FK
+        int total_trips
+        float total_distance
+        float average_rating
+    }
+
+    Analytics {
+        int id PK
+        date date
+        int total_trips
+        decimal total_revenue
+        time average_trip_time
+    }
+
+    Feedback {
+        int id PK
+        int booking_id FK
+        int rating
+        string comment
+        datetime created_at
+    }
