@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Vehicle, Booking, Location, User, LogisticAccountUser
+from .models import Booking, Driver, LogisticAccountUser, Vehicle, Trip, DriverPerformance, Location, PriceEstimation, Feedback
+
 
 
 class CreateBookingRequestSerializer(serializers.Serializer):
@@ -23,8 +24,8 @@ class SubmitFeedbackRequestSerializer(serializers.Serializer):
 
 class BookingListRequestSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=Booking.STATUS_CHOICES, required=False)
-    from_date = serializers.DateTimeField(required=False)
-    to_date = serializers.DateTimeField(required=False)
+    from_date = serializers.DateTimeField()
+    to_date = serializers.DateTimeField()
 
 
 from rest_framework import serializers
@@ -58,3 +59,49 @@ class LocationResponseSerializer(serializers.Serializer):
     latitude = serializers.DecimalField(max_digits=9, decimal_places=6)
     longitude = serializers.DecimalField(max_digits=9, decimal_places=6)
     timestamp = serializers.DateTimeField()
+
+
+class BookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Booking
+        fields = '__all__'
+
+class DriverSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Driver
+        fields = '__all__'
+
+class VehicleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vehicle
+        fields = '__all__'
+
+class TripSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Trip
+        fields = '__all__'
+
+class DriverPerformanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DriverPerformance
+        fields = '__all__'
+
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = '__all__'
+
+class PriceEstimationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PriceEstimation
+        fields = '__all__'
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feedback
+        fields = '__all__'
+
+class LogisticAccountUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LogisticAccountUser
+        fields = '__all__'

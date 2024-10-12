@@ -45,6 +45,7 @@ class Booking(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    scheduled_time = models.DateTimeField(auto_now=True)
     estimated_price = models.DecimalField(max_digits=10, decimal_places=2)
     actual_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
