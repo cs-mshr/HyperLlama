@@ -10,10 +10,10 @@ from logistics_provider_core.storages.dtos import CreateBookingDTO
 
 class UserActionStorage:
     def get_user_booking(
-        self, from_date: datetime, to_date: datetime, status: Optional[str]
+        self, user_id:int, from_date: datetime, to_date: datetime, status: Optional[str]
     ) -> List[BookingData]:
         queryset = Booking.objects.filter(
-            scheduled_time__gte=from_date, scheduled_time__lte=to_date
+            scheduled_time__gte=from_date, scheduled_time__lte=to_date, user__id=user_id
         )
         if status is not None:
             queryset = queryset.filter(status=status)
@@ -23,7 +23,8 @@ class UserActionStorage:
 
     def _get_booking_data_dto(self, booking):
         return BookingData(
-            id=booking.id,
+            user_id=booking.user.id,
+            booking_id=booking.id,
             pickup_location=booking.pickup_location,
             dropoff_location=booking.dropoff_location,
             vehicle_type=booking.vehicle_type,
@@ -45,3 +46,12 @@ class UserActionStorage:
             status=create_booking_dto.status,
         )
         return self._get_booking_data_dto(booking=booking)
+
+    def get_booking_by_id(self, booking_id):
+        booking = Booking.objects.get(id=booking_id)
+        return self._get_booking_data_dto(booking=booking)
+
+    def update_booking_status(self, booking_id, status):
+        booking = Booking.objects.get(id=booking_id)
+        booking.status = status
+        booking.save()

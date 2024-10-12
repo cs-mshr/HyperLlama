@@ -6,7 +6,8 @@ from decimal import Decimal
 
 @dataclass
 class BookingData:
-    id: int
+    user_id: int
+    booking_id: int
     pickup_location: str
     dropoff_location: str
     vehicle_type: str

@@ -33,7 +33,7 @@ def list_bookings(request):
     interactor = GetUserBookingList(user_action_storage=user_action_storage)
 
     try:
-        response_data = interactor.get_bookings_lists(filter_request=filter_serializer.validated_data)
+        response_data = interactor.get_bookings_lists(user_id=request.user.id, filter_request=filter_serializer.validated_data)
         return Response(response_data, status=status.HTTP_201_CREATED)
     except Exception as e:
         response_data = {
@@ -69,14 +69,25 @@ def create_booking(request):
         return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def cancel_booking(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
-    booking.status = 'CANCELLED'
-    booking.save()
-    return Response({"message": "Booking cancelled successfully"})
+    from logistics_provider_core.interactors.cancel_booking import CancelBooking
+    from logistics_provider_core.storages.user_action_storage import UserActionStorage
+
+    user_action_storage = UserActionStorage()
+    interactor = CancelBooking(user_action_storage=user_action_storage)
+
+    try:
+        response_data = interactor.cancel_booking(booking_id=booking_id, user_id=request.user.id)
+        return Response(response_data, status=status.HTTP_200_OK)
+    except Exception as e:
+        response_data = {
+            "error": str(e),
+            "stack_trace": traceback.format_exc()
+        }
+        print(response_data["stack_trace"])
+        return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET'])
