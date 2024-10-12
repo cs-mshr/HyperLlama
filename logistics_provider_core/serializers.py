@@ -84,6 +84,19 @@ class LocationResponseSerializer(serializers.Serializer):
     longitude = serializers.DecimalField(max_digits=9, decimal_places=6)
     timestamp = serializers.DateTimeField()
 
+class UpdateBookingStatusRequest(serializers.Serializer):
+    status = serializers.ChoiceField(
+        choices=[
+            ("PENDING", "Pending"),
+            ("ACCEPTED", "Accepted"),
+            ("EN_ROUTE", "En Route to Pickup"),
+            ("PICKED_UP", "Goods Picked Up"),
+            ("IN_TRANSIT", "In Transit"),
+            ("DELIVERED", "Delivered"),
+            ("CANCELLED", "Cancelled"),
+        ]
+    )
+
 
 class BookingSerializer(serializers.ModelSerializer):
     class Meta:
@@ -137,3 +150,12 @@ class LogisticAccountUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = LogisticAccountUser
         fields = "__all__"
+
+
+class RegisterDriverRequestSerializer(serializers.Serializer):
+    vehicle_id = serializers.CharField(max_length=20, required=False)
+    license_number = serializers.CharField(max_length=20)
+    current_location = serializers.CharField(max_length=255)
+
+class GetDriverDetailsRequestSerializer(serializers.Serializer):
+    driver_id = serializers.IntegerField()

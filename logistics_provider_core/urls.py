@@ -10,6 +10,7 @@ urlpatterns = [
     path('bookings/<int:booking_id>/feedback/', views.submit_feedback, name='submit_feedback'),
     path('vehicle-types/', views.list_vehicle_types, name='list_vehicle_types'),
 
+    path('dirver/register', views.register_driver, name='register_driver'),
     path('driver/bookings/available/', views.list_available_booking_requests, name='list_available_booking_requests'),
     path('driver/bookings/<int:booking_id>/', views.get_booking_request_details, name='get_booking_request_details'),
     path('driver/bookings/<int:booking_id>/accept/', views.accept_booking_request, name='accept_booking_request'),

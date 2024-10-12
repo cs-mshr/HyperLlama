@@ -15,3 +15,9 @@ class EmailAlreadyTaken(Exception):
 class PhoneNumberAlreadyTaken(Exception):
     def __init__(self, phone_number:str):
         self.phone_number = phone_number
+
+class DriverHaveOngoingDelivery(Exception):
+    pass
+
+class BookingAlreadyPicked(Exception):
+    pass
