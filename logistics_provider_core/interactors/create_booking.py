@@ -14,7 +14,8 @@ class CreateBooking:
         )
         booking_req.estimated_price = estimated_price
 
-        self.user_action_storage.create_booking(create_booking_dto=booking_req)
+        booking_data = self.user_action_storage.create_booking(create_booking_dto=booking_req)
+        return booking_data.__dict__
 
     def _get_estimated_price(self, pickup_location, dropoff_location, vehicle_type):
         return 100

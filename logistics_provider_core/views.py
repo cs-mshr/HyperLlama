@@ -59,7 +59,7 @@ def create_booking(request):
 
     try:
         response_data = interactor.create_booking(booking_req=booking_req_dto)
-        return Response(response_data, status=status.HTTP_200_OK)
+        return Response(response_data, status=status.HTTP_201_CREATED)
     except Exception as e:
         response_data = {
             "error": str(e),
@@ -68,8 +68,6 @@ def create_booking(request):
         print(response_data["stack_trace"])
         return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    response_serializer = BookingResponseSerializer(booking)
-    return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])

@@ -1,9 +1,8 @@
 from datetime import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Union
 
 from logistics_provider_core.storages.dtos import BookingData
 from logistics_provider_core.storages.user_action_storage import UserActionStorage
-from logistics_provider_core.utils.datetime_utils import convert_date_str_to_datetime
 
 
 class GetUserBookingList:
@@ -22,6 +21,6 @@ class GetUserBookingList:
 
     def _get_bookings_dicts(self, bookings:List[BookingData]):
         return [
-            bookings.__dict__
+            booking.__dict__
             for booking in bookings
         ]

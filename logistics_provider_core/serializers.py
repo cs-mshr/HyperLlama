@@ -32,7 +32,7 @@ from rest_framework import serializers
 
 
 class BookingResponseSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
+    booking_id = serializers.IntegerField()
     pickup_location = serializers.CharField(max_length=255)
     dropoff_location = serializers.CharField(max_length=255)
     vehicle_type = serializers.ChoiceField(
