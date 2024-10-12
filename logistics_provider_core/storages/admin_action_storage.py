@@ -1,0 +1,2 @@
+class AdminActionStorage:
+    pass

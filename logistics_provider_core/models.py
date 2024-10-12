@@ -5,6 +5,7 @@ from django.core.validators import MinValueValidator
 class LogisticAccountUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='logistic_account')
     phone_number = models.CharField(max_length=15)
+    username = models.CharField(max_length=15)
     is_driver = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
 

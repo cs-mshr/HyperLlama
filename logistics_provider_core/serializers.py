@@ -1,0 +1,60 @@
+from rest_framework import serializers
+from .models import Vehicle, Booking, Location, User, LogisticAccountUser
+
+
+class CreateBookingRequestSerializer(serializers.Serializer):
+    pickup_location = serializers.CharField(max_length=255)
+    dropoff_location = serializers.CharField(max_length=255)
+    vehicle_type = serializers.ChoiceField(choices=Vehicle.VEHICLE_TYPES)
+    scheduled_time = serializers.DateTimeField()
+
+class PriceEstimateRequestSerializer(serializers.Serializer):
+    pickup_location = serializers.CharField(max_length=255)
+    dropoff_location = serializers.CharField(max_length=255)
+    vehicle_type = serializers.ChoiceField(choices=Vehicle.VEHICLE_TYPES)
+
+class UpdateUserProfileRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=False)
+    phone_number = serializers.CharField(max_length=15, required=False)
+
+class SubmitFeedbackRequestSerializer(serializers.Serializer):
+    rating = serializers.IntegerField(min_value=1, max_value=5)
+    comment = serializers.CharField(max_length=500, allow_blank=True)
+
+class BookingListRequestSerializer(serializers.Serializer):
+    status = serializers.ChoiceField(choices=Booking.STATUS_CHOICES, required=False)
+    from_date = serializers.DateTimeField(required=False)
+    to_date = serializers.DateTimeField(required=False)
+
+
+from rest_framework import serializers
+
+
+class BookingResponseSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    pickup_location = serializers.CharField(max_length=255)
+    dropoff_location = serializers.CharField(max_length=255)
+    vehicle_type = serializers.ChoiceField(
+        choices=[('BIKE', 'Bike'), ('CAR', 'Car'), ('VAN', 'Van'), ('TRUCK', 'Truck')])
+    scheduled_time = serializers.DateTimeField()
+    status = serializers.ChoiceField(
+        choices=[('PENDING', 'Pending'), ('ACCEPTED', 'Accepted'), ('EN_ROUTE', 'En Route to Pickup'),
+                 ('PICKED_UP', 'Goods Picked Up'), ('IN_TRANSIT', 'In Transit'), ('DELIVERED', 'Delivered'),
+                 ('CANCELLED', 'Cancelled')])
+    estimated_price = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+
+class UserProfileResponseSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    username = serializers.CharField(max_length=150)
+    email = serializers.EmailField()
+
+
+class VehicleTypeResponseSerializer(serializers.Serializer):
+    type = serializers.ChoiceField(choices=[('BIKE', 'Bike'), ('CAR', 'Car'), ('VAN', 'Van'), ('TRUCK', 'Truck')])
+
+
+class LocationResponseSerializer(serializers.Serializer):
+    latitude = serializers.DecimalField(max_digits=9, decimal_places=6)
+    longitude = serializers.DecimalField(max_digits=9, decimal_places=6)
+    timestamp = serializers.DateTimeField()
