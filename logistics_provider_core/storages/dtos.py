@@ -22,7 +22,6 @@ class UserData:
     id: int
     phone_number: str
     name: str
-    is_driver: str
     is_admin: str
 
 

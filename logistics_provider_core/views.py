@@ -141,7 +141,6 @@ def user_profile(request):
             response_data = {"error": str(e), "stack_trace": traceback.format_exc()}
             print(response_data["stack_trace"])
             return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
     elif request.method == "PUT":
         serializer = UpdateUserProfileRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

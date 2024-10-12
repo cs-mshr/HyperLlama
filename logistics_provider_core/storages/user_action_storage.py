@@ -94,7 +94,6 @@ class UserActionStorage:
             phone_number=user.phone_number,
             name=user.username,
             is_admin=user.is_admin,
-            is_driver=user.is_driver
         )
 
     def get_is_email_already_taken(self, email, user_id:int):
