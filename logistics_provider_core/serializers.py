@@ -1,6 +1,15 @@
 from rest_framework import serializers
-from .models import Booking, Driver, LogisticAccountUser, Vehicle, Trip, DriverPerformance, Location, PriceEstimation, Feedback
-
+from .models import (
+    Booking,
+    Driver,
+    LogisticAccountUser,
+    Vehicle,
+    Trip,
+    DriverPerformance,
+    Location,
+    PriceEstimation,
+    Feedback,
+)
 
 
 class CreateBookingRequestSerializer(serializers.Serializer):
@@ -9,18 +18,23 @@ class CreateBookingRequestSerializer(serializers.Serializer):
     vehicle_type = serializers.ChoiceField(choices=Vehicle.VEHICLE_TYPES)
     scheduled_time = serializers.DateTimeField()
 
+
 class PriceEstimateRequestSerializer(serializers.Serializer):
     pickup_location = serializers.CharField(max_length=255)
     dropoff_location = serializers.CharField(max_length=255)
     vehicle_type = serializers.ChoiceField(choices=Vehicle.VEHICLE_TYPES)
 
+
 class UpdateUserProfileRequestSerializer(serializers.Serializer):
     email = serializers.EmailField(required=False)
     phone_number = serializers.CharField(max_length=15, required=False)
+    password = serializers.CharField(max_length=15, required=False)
+
 
 class SubmitFeedbackRequestSerializer(serializers.Serializer):
     rating = serializers.IntegerField(min_value=1, max_value=5)
     comment = serializers.CharField(max_length=500, allow_blank=True)
+
 
 class BookingListRequestSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=Booking.STATUS_CHOICES, required=False)
@@ -36,12 +50,20 @@ class BookingResponseSerializer(serializers.Serializer):
     pickup_location = serializers.CharField(max_length=255)
     dropoff_location = serializers.CharField(max_length=255)
     vehicle_type = serializers.ChoiceField(
-        choices=[('BIKE', 'Bike'), ('CAR', 'Car'), ('VAN', 'Van'), ('TRUCK', 'Truck')])
+        choices=[("BIKE", "Bike"), ("CAR", "Car"), ("VAN", "Van"), ("TRUCK", "Truck")]
+    )
     scheduled_time = serializers.DateTimeField()
     status = serializers.ChoiceField(
-        choices=[('PENDING', 'Pending'), ('ACCEPTED', 'Accepted'), ('EN_ROUTE', 'En Route to Pickup'),
-                 ('PICKED_UP', 'Goods Picked Up'), ('IN_TRANSIT', 'In Transit'), ('DELIVERED', 'Delivered'),
-                 ('CANCELLED', 'Cancelled')])
+        choices=[
+            ("PENDING", "Pending"),
+            ("ACCEPTED", "Accepted"),
+            ("EN_ROUTE", "En Route to Pickup"),
+            ("PICKED_UP", "Goods Picked Up"),
+            ("IN_TRANSIT", "In Transit"),
+            ("DELIVERED", "Delivered"),
+            ("CANCELLED", "Cancelled"),
+        ]
+    )
     estimated_price = serializers.DecimalField(max_digits=10, decimal_places=2)
 
 
@@ -52,7 +74,9 @@ class UserProfileResponseSerializer(serializers.Serializer):
 
 
 class VehicleTypeResponseSerializer(serializers.Serializer):
-    type = serializers.ChoiceField(choices=[('BIKE', 'Bike'), ('CAR', 'Car'), ('VAN', 'Van'), ('TRUCK', 'Truck')])
+    type = serializers.ChoiceField(
+        choices=[("BIKE", "Bike"), ("CAR", "Car"), ("VAN", "Van"), ("TRUCK", "Truck")]
+    )
 
 
 class LocationResponseSerializer(serializers.Serializer):
@@ -64,44 +88,52 @@ class LocationResponseSerializer(serializers.Serializer):
 class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
-        fields = '__all__'
+        fields = "__all__"
+
 
 class DriverSerializer(serializers.ModelSerializer):
     class Meta:
         model = Driver
-        fields = '__all__'
+        fields = "__all__"
+
 
 class VehicleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vehicle
-        fields = '__all__'
+        fields = "__all__"
+
 
 class TripSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
-        fields = '__all__'
+        fields = "__all__"
+
 
 class DriverPerformanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = DriverPerformance
-        fields = '__all__'
+        fields = "__all__"
+
 
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = '__all__'
+        fields = "__all__"
+
 
 class PriceEstimationSerializer(serializers.ModelSerializer):
     class Meta:
         model = PriceEstimation
-        fields = '__all__'
+        fields = "__all__"
+
 
 class FeedbackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Feedback
-        fields = '__all__'
+        fields = "__all__"
+
 
 class LogisticAccountUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = LogisticAccountUser
-        fields = '__all__'
+        fields = "__all__"

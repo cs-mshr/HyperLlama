@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
+from typing import Optional, List
 
+from django.db.models.fields import return_None
 
 
 @dataclass
@@ -15,6 +17,15 @@ class BookingData:
     status: str
     estimated_price: float
 
+@dataclass
+class UserData:
+    id: int
+    phone_number: str
+    name: str
+    is_driver: str
+    is_admin: str
+
+
 
 @dataclass
 class CreateBookingDTO:
@@ -26,3 +37,34 @@ class CreateBookingDTO:
     status: str = 'PENDING'
     driver_id: int = None
     estimated_price: Decimal = None
+
+@dataclass
+class PriceEstimationReqDTO:
+    pickup_location: str
+    dropoff_location: str
+    vehicle_type: str
+
+@dataclass
+class BookingDTO:
+    user_id: int
+    driver_id: Optional[int]
+    vehicle_type: str
+    pickup_location: str
+    dropoff_location: str
+    status: str
+    created_at: datetime
+    updated_at: datetime
+    scheduled_time: datetime
+    estimated_price: Decimal
+    actual_price: Optional[Decimal]
+
+@dataclass
+class UserProfileDTO:
+    user_data: UserData
+    bookings: List[BookingDTO]
+
+@dataclass
+class UpdateUserDetailsReqDTO:
+    email: str
+    phone_number: str
+    password: str

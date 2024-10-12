@@ -38,7 +38,7 @@ class Booking(models.Model):
         ('CANCELLED', 'Cancelled'),
     ]
     user = models.ForeignKey(LogisticAccountUser, on_delete=models.CASCADE, related_name='bookings')
-    driver = models.ForeignKey(Driver, on_delete=models.SET_NULL, null=True, related_name='assignments')
+    driver = models.ForeignKey(Driver, on_delete=models.SET_NULL, null=True, related_name='assignments', blank=True)
     vehicle_type = models.CharField(max_length=5, choices=Vehicle.VEHICLE_TYPES)
     pickup_location = models.CharField(max_length=255)
     dropoff_location = models.CharField(max_length=255)

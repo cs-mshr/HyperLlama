@@ -3,8 +3,10 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import List, Optional
 
+from django.contrib.auth.models import User
+
 from logistics_provider_core.models import Booking, LogisticAccountUser, Driver
-from logistics_provider_core.storages.dtos import BookingData
+from logistics_provider_core.storages.dtos import BookingData, BookingDTO, UserProfileDTO, UserData
 from logistics_provider_core.storages.dtos import CreateBookingDTO
 
 
@@ -55,3 +57,65 @@ class UserActionStorage:
         booking = Booking.objects.get(id=booking_id)
         booking.status = status
         booking.save()
+
+    def get_logistics_user_data_by_id(self, user_id):
+        user = LogisticAccountUser.objects.get(user__id=user_id)
+        user_dto = self._get_user_dto(user=user)
+        bookings = Booking.objects.filter(user=user)
+        booking_dtos = [self._get_booking_dto(booking=booking) for booking in bookings]
+
+        return UserProfileDTO(
+            user_data=user_dto,
+            bookings=booking_dtos
+        )
+
+
+    def _get_booking_dto(self, booking:Booking):
+        driver_id = None
+        if booking.driver:
+            driver_id = booking.driver.user.id
+        return BookingDTO(
+            user_id=booking.user.id,
+            driver_id=driver_id,
+            vehicle_type=booking.vehicle_type,
+            pickup_location=booking.pickup_location,
+            dropoff_location=booking.dropoff_location,
+            status=booking.status,
+            created_at=booking.created_at,
+            updated_at=booking.updated_at,
+            scheduled_time=booking.scheduled_time,
+            estimated_price=booking.estimated_price,
+            actual_price=booking.actual_price
+        )
+
+    def _get_user_dto(self, user):
+        return UserData(
+            id = user.id,
+            phone_number=user.phone_number,
+            name=user.username,
+            is_admin=user.is_admin,
+            is_driver=user.is_driver
+        )
+
+    def get_is_email_already_taken(self, email, user_id:int):
+        return User.objects.filter(email=email).exclude(id=user_id).exists()
+
+    def is_phone_already_in_use(self, user_id, phone_number):
+        return LogisticAccountUser.objects.filter(phone_number=phone_number).exclude(user_id=user_id).exists()
+
+    def update_user_email(self, user_id, email):
+        user = User.objects.get(id=user_id)
+        user.email = email
+        user.save()
+
+    def update_phone_number(self, user_id, phone_number):
+        logistic_account_user = LogisticAccountUser.objects.get(user__id=user_id)
+        logistic_account_user.phone_number = phone_number
+        logistic_account_user.save()
+
+    def update_user_password(self, password:str, user_id:int):
+        user = User.objects.get(id=user_id)
+        user.set_password(password)
+        user.save()
+
+
