@@ -12,6 +12,8 @@ urlpatterns = [
     path('bookings/<int:booking_id>/feedback/', views.submit_feedback, name='submit_feedback'),
     path('vehicle-types/', views.list_vehicle_types, name='list_vehicle_types'),
 
+
+
     path('dirver/register', views.register_driver, name='register_driver'),
     path('driver/bookings/available/', views.list_available_booking_requests, name='list_available_booking_requests'),
     path('driver/bookings/<int:booking_id>/', views.get_booking_request_details, name='get_booking_request_details'),
@@ -27,8 +29,11 @@ urlpatterns = [
     path('driver/profile/update/', views.update_driver_profile, name='update_driver_profile'),
     path('driver/location/update/', views.update_driver_location, name='update_driver_location'),
 
-    path('p/vehicles/', admin_views.vehicle_list, name='vehicle-list'),
+
+
+    path('admin/vehicles/', admin_views.vehicle_list, name='vehicle-list'),
     path('admin/vehicles/<int:vehicle_id>/', admin_views.vehicle_detail, name='vehicle-detail'),
+    path('admin/vehicles/create', admin_views.create_vehicle, name='vehicle-create'),
     path('admin/drivers/', admin_views.driver_list, name='driver-list'),
     path('admin/drivers/<int:driver_id>/', admin_views.driver_detail, name='driver-detail'),
     path('admin/drivers/<int:driver_id>/performance/', admin_views.driver_performance, name='driver-performance'),

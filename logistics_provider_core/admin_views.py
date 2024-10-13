@@ -1,3 +1,5 @@
+import traceback
+
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.db.models import Avg, Count, Sum, F
@@ -5,16 +7,23 @@ from django.db.models.functions import TruncDate, TruncMonth
 from django.utils import timezone
 
 from .decorators import user_passes_test_with_message
-from .models import Vehicle, Driver, Booking, Trip, DriverPerformance, Analytics, LogisticAccountUser, Location
+from .models import Driver, Booking, Trip, DriverPerformance, Analytics, LogisticAccountUser, Location
 from logistics_provider_core.utils.common_utils import model_to_dict
+from rest_framework import status
+from logistics_provider_core.models import Vehicle
+from logistics_provider_core.serializers import VehicleSerializer
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+
+
 
 def is_admin(user):
-    logistic_account_user = LogisticAccountUser(user=user)
+    logistic_account_user = LogisticAccountUser.objects.get(user=user)
     return logistic_account_user.is_admin
 
 
 @user_passes_test_with_message(is_admin)
-@require_http_methods(["GET"])
+@api_view(["GET"])
 def vehicle_list(request):
     vehicles = Vehicle.objects.all()
     data = [model_to_dict(vehicle) for vehicle in vehicles]
@@ -22,7 +31,7 @@ def vehicle_list(request):
 
 
 @user_passes_test_with_message(is_admin)
-@require_http_methods(["GET", "PUT", "DELETE"])
+@api_view(["GET", "PUT", "DELETE"])
 def vehicle_detail(request, vehicle_id):
     try:
         vehicle = Vehicle.objects.get(id=vehicle_id)
@@ -40,7 +49,7 @@ def vehicle_detail(request, vehicle_id):
 
 
 @user_passes_test_with_message(is_admin)
-@require_http_methods(["GET"])
+@api_view(["GET"])
 def driver_list(request):
     drivers = Driver.objects.all()
     data = [model_to_dict(driver) for driver in drivers]
@@ -48,7 +57,7 @@ def driver_list(request):
 
 
 @user_passes_test_with_message(is_admin)
-@require_http_methods(["GET"])
+@api_view(["GET"])
 def driver_detail(request, driver_id):
     try:
         driver = Driver.objects.get(id=driver_id)
@@ -60,7 +69,7 @@ def driver_detail(request, driver_id):
 
 
 @user_passes_test_with_message(is_admin)
-@require_http_methods(["GET"])
+@api_view(["GET"])
 def driver_performance(request, driver_id):
     try:
         performance = DriverPerformance.objects.get(driver_id=driver_id)
@@ -72,7 +81,7 @@ def driver_performance(request, driver_id):
 
 
 @user_passes_test_with_message(is_admin)
-@require_http_methods(["GET"])
+@api_view(["GET"])
 def driver_location(request, driver_id):
     try:
         driver = Driver.objects.get(id=driver_id)
@@ -89,7 +98,7 @@ def driver_location(request, driver_id):
 
 
 @user_passes_test_with_message(is_admin)
-@require_http_methods(["GET"])
+@api_view(["GET"])
 def driver_trips(request, driver_id):
     trips = Trip.objects.filter(booking__driver_id=driver_id)
     data = [model_to_dict(trip) for trip in trips]
@@ -97,7 +106,7 @@ def driver_trips(request, driver_id):
 
 
 @user_passes_test_with_message(is_admin)
-@require_http_methods(["GET"])
+@api_view(["GET"])
 def active_drivers(request):
     drivers = Driver.objects.filter(assignments__status='EN_ROUTE')
     data = [model_to_dict(driver) for driver in drivers]
@@ -105,7 +114,7 @@ def active_drivers(request):
 
 
 @user_passes_test_with_message(is_admin)
-@require_http_methods(["GET"])
+@api_view(["GET"])
 def booking_list(request):
     bookings = Booking.objects.all()
     data = [model_to_dict(booking) for booking in bookings]
@@ -113,7 +122,7 @@ def booking_list(request):
 
 
 @user_passes_test_with_message(is_admin)
-@require_http_methods(["GET"])
+@api_view(["GET"])
 def booking_stats(request):
     total_bookings = Booking.objects.count()
     avg_price = Booking.objects.filter(actual_price__isnull=False).aggregate(Avg('actual_price'))['actual_price__avg']
@@ -125,7 +134,7 @@ def booking_stats(request):
 
 
 @user_passes_test_with_message(is_admin)
-@require_http_methods(["GET"])
+@api_view(["GET"])
 def trip_stats(request):
     total_trips = Trip.objects.count()
     avg_duration = Trip.objects.filter(end_time__isnull=False).aggregate(
@@ -141,7 +150,7 @@ def trip_stats(request):
 
 
 @user_passes_test_with_message(is_admin)
-@require_http_methods(["GET"])
+@api_view(["GET"])
 def revenue_analytics(request):
     period = request.GET.get('period', 'daily')
     if period == 'daily':
@@ -162,13 +171,13 @@ def revenue_analytics(request):
 
 
 @user_passes_test_with_message(is_admin)
-@require_http_methods(["POST"])
+@api_view(["POST"])
 def custom_analytics(request):
     return JsonResponse({'message': 'Custom analytics not implemented yet'})
 
 
 @user_passes_test_with_message(is_admin)
-@require_http_methods(["GET"])
+@api_view(["GET"])
 def dashboard_overview(request):
     today = timezone.now().date()
     data = {
@@ -205,3 +214,18 @@ def dashboard_charts(request):
         return JsonResponse({'error': 'Invalid chart type'}, status=400)
 
     return JsonResponse(data, safe=False)
+
+@user_passes_test_with_message(is_admin)
+@api_view(["POST"])
+def create_vehicle(request):
+    serializer = VehicleSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    try:
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        response_data = {"error": str(e), "stack_trace": traceback.format_exc()}
+        print(response_data["stack_trace"])
+        return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
