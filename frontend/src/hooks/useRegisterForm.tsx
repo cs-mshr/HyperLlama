@@ -11,7 +11,6 @@ import { isAxiosError } from "axios";
 import _ from "lodash";
 import { Axios } from "@/api/axios";
 
-
 export const useRegisterForm = () => {
   const notificationId = useId();
   const queryParams = getQueryParam();
@@ -72,6 +71,8 @@ export const useRegisterForm = () => {
             const token = await res.json();
             if (token.key) {
               localStorage.setItem("jwt", token.key);
+              Axios().defaults.headers.Authorization = `Bearer ${token.key}`;
+
               nav(
                 {
                   pathname,
@@ -84,12 +85,13 @@ export const useRegisterForm = () => {
           }
           //204
           case StatusCodes.NO_CONTENT: {
-           
             const pathname = location.state?.from?.pathname || HOME_ROUTE;
             // set jwt token in local storage
             const token = await res.json();
             if (token.key) {
               localStorage.setItem("jwt", token.key);
+              Axios().defaults.headers.Authorization = `Bearer ${token.key}`;
+
               nav(
                 {
                   pathname,
@@ -100,9 +102,7 @@ export const useRegisterForm = () => {
 
             break;
           }
-            
-          
-            
+
           case StatusCodes.UNAUTHORIZED: {
             setError("Invalid credential");
             break;
@@ -133,7 +133,6 @@ export const useRegisterForm = () => {
               password: err.response?.data?.password || "Invalid request",
               email: err.response?.data?.email || "Invalid request",
             });
-
 
             notifyError({
               message: "The request failed with a status code of 400",

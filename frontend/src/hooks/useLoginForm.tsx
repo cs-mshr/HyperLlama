@@ -71,6 +71,7 @@ export const useLoginForm = () => {
             const token = res.data;
             if (token.key) {
               localStorage.setItem("jwt", token.key);
+              Axios().defaults.headers.Authorization = `Bearer ${token.key}`;
               nav(
                 {
                   pathname,
