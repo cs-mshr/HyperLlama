@@ -1,5 +1,4 @@
 import Loading from "@/components/Loading";
-import { useLoginForm } from "@/hooks/useLoginForm";
 import {
   Box,
   Button,
@@ -12,12 +11,13 @@ import {
 import { useDocumentTitle } from "@mantine/hooks";
 import { FC } from "react";
 import loginStyles from "./styles/Login.module.css";
+import { useRegisterForm } from "@/hooks/useRegisterForm";
 
 const Login: FC = () => {
-  useDocumentTitle("Gullu | Login");
+  useDocumentTitle("Gullu | Register");
 
   const { getInputProps, isValid, loading, handleSubmit, error } =
-    useLoginForm();
+    useRegisterForm();
 
   const classes = loginStyles;
   const {
@@ -65,7 +65,7 @@ const Login: FC = () => {
             <form className={formContainer} onSubmit={handleSubmit()}>
               <Loading visible={loading} variant="oval" position="absolute" />
               <Text mt="xl" className={titleStyle}>
-                👋 Welcome back
+                👋 Register please
               </Text>
               <Text mt="sm" size={"sm"} color="dimmed">
                 Please enter your credentials
@@ -106,9 +106,8 @@ const Login: FC = () => {
                 className={loginBtnStyle}
                 disabled={!isValid()}
               >
-                Login
+                Register
               </Button>
-
               <Divider
                 label=" Or  "
                 labelPosition="center"
@@ -116,14 +115,8 @@ const Login: FC = () => {
                 style={{ width: "100%" }}
               />
 
-              <Button
-                component="a"
-                href="/register"
-                variant="outline"
-             
-               
-              >
-                Register
+              <Button component="a" href="/login" variant="outline">
+                Login
               </Button>
             </form>
           </Box>

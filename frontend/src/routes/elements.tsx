@@ -23,3 +23,13 @@ export const LoginElement: FC = () => {
     </SuspensePage>
   );
 };
+
+const Register = lazy(() => import("@/pages/Register"));
+
+export const RegisterElement: FC = () => {
+  return (
+    <SuspensePage>
+      <Register />
+    </SuspensePage>
+  );
+};

@@ -10,7 +10,7 @@ import { useEffect, useMemo } from "react";
 import { isAxiosError } from "axios";
 import _ from "lodash";
 
-export const useLoginForm = () => {
+export const useRegisterForm = () => {
   const notificationId = useId();
   const queryParams = getQueryParam();
   const [loading, setLoading] = useMountedState(false);
@@ -34,18 +34,18 @@ export const useLoginForm = () => {
     initialValues: {
       username: queryParams.username ?? "",
       password: queryParams.password ?? "",
-      email: queryParams.email ?? ""
+      email: queryParams.email ?? "",
     },
     validate: {
       username: (value) => (value ? null : ""),
       password: (value) => (value ? null : ""),
-      email: (value) => (value ? null : "") 
+      email: (value) => (value ? null : ""),
     },
     transformValues: (values) => {
       return {
         username: values.username.trim(),
         password: values.password.trim(),
-        email: values.email.trim()
+        email: values.email.trim(),
       };
     },
   });
@@ -57,7 +57,11 @@ export const useLoginForm = () => {
         setError(null);
         hideNotification(notificationId);
 
-        const res = await loginIn(data.username, data.password,data.email) as { status: number };
+        const res = (await loginIn(
+          data.username,
+          data.password,
+          data.email
+        )) as { status: number };
 
         switch (res.status) {
           case StatusCodes.OK: {
@@ -110,31 +114,38 @@ export const useLoginForm = () => {
 };
 
 const getQueryParam = () => {
-	const location = useLocation();
-	return useMemo(() => {
-		const searchParams = new URLSearchParams(location.search);
-		const query = searchParams.get('q');
-		if (!query) return {};
-		const base64 = query.replaceAll('.', '+').replaceAll('_', '/').replaceAll('-', '=');
-		const decoded = atob(base64);
-		try {
-			const obj = JSON.parse(decoded);
-			return obj;
-		} catch (e) {
-			return {};
-		}
-	}, [location]);
+  const location = useLocation();
+  return useMemo(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const query = searchParams.get("q");
+    if (!query) return {};
+    const base64 = query
+      .replaceAll(".", "+")
+      .replaceAll("_", "/")
+      .replaceAll("-", "=");
+    const decoded = atob(base64);
+    try {
+      const obj = JSON.parse(decoded);
+      return obj;
+    } catch (e) {
+      return {};
+    }
+  }, [location]);
 };
 
-
-const loginIn = async (username: string, password: string,email:string) => {
-  const url = "http://localhost:8000/dj-rest-auth/login/";
+const loginIn = async (username: string, password: string, email: string) => {
+  const url = "http://localhost:8000/dj-rest-auth/registration/";
   const res = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ username, password , email: email}),
+    body: JSON.stringify({
+      username,
+      password1: password,
+      password2: password,
+      email: email,
+    }),
   });
   return res;
-}
+};
