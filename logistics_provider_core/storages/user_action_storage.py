@@ -92,7 +92,7 @@ class UserActionStorage:
         return UserData(
             id = user.id,
             phone_number=user.phone_number,
-            name=user.username,
+            name=user.user.username,
             is_admin=user.is_admin,
         )
 
