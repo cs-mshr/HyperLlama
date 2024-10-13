@@ -1,6 +1,7 @@
-import { Axios } from "@/api/axios";
+import { Axios, signOutHandler } from "@/api/axios";
 import {
   AppShell,
+  Box,
   Burger,
   Button,
   Group,
@@ -25,128 +26,6 @@ const vehicleIcons = {
   VAN: <IconBus />,
   TRUCK: <IconTruck />,
 };
-// {
-//     "user_data": {
-//         "id": 7,
-//         "phone_number": "",
-//         "name": "sss",
-//         "is_admin": false
-//     },
-//     "bookings": [
-//         {
-//             "booking_id": 1,
-//             "user_id": 7,
-//             "driver_id": null,
-//             "vehicle_type": "BIKE",
-//             "pickup_location": "sdkj",
-//             "dropoff_location": "klfdha",
-//             "status": "PENDING",
-//             "created_at": "2024-10-13T19:16:44.288897Z",
-//             "updated_at": "2024-10-13T19:16:44.288921Z",
-//             "scheduled_time": "2024-10-13T19:16:44.288930Z",
-//             "estimated_price": 100.0,
-//             "actual_price": null
-//         },
-//         {
-//             "booking_id": 2,
-//             "user_id": 7,
-//             "driver_id": null,
-//             "vehicle_type": "BIKE",
-//             "pickup_location": "sdkj",
-//             "dropoff_location": "klfdha",
-//             "status": "PENDING",
-//             "created_at": "2024-10-13T19:16:45.284710Z",
-//             "updated_at": "2024-10-13T19:16:45.284736Z",
-//             "scheduled_time": "2024-10-13T19:16:45.284748Z",
-//             "estimated_price": 100.0,
-//             "actual_price": null
-//         },
-//         {
-//             "booking_id": 3,
-//             "user_id": 7,
-//             "driver_id": null,
-//             "vehicle_type": "BIKE",
-//             "pickup_location": "sdkj",
-//             "dropoff_location": "klfdha",
-//             "status": "PENDING",
-//             "created_at": "2024-10-13T19:16:49.700869Z",
-//             "updated_at": "2024-10-13T19:16:49.700881Z",
-//             "scheduled_time": "2024-10-13T19:16:49.700886Z",
-//             "estimated_price": 100.0,
-//             "actual_price": null
-//         },
-//         {
-//             "booking_id": 4,
-//             "user_id": 7,
-//             "driver_id": null,
-//             "vehicle_type": "BIKE",
-//             "pickup_location": "sdkj",
-//             "dropoff_location": "klfdha",
-//             "status": "PENDING",
-//             "created_at": "2024-10-13T19:18:11.486307Z",
-//             "updated_at": "2024-10-13T19:18:11.486323Z",
-//             "scheduled_time": "2024-10-13T19:18:11.486329Z",
-//             "estimated_price": 100.0,
-//             "actual_price": null
-//         },
-//         {
-//             "booking_id": 5,
-//             "user_id": 7,
-//             "driver_id": null,
-//             "vehicle_type": "TRUCK",
-//             "pickup_location": "sdkj",
-//             "dropoff_location": "klfdha",
-//             "status": "PENDING",
-//             "created_at": "2024-10-13T19:41:48.949350Z",
-//             "updated_at": "2024-10-13T19:41:48.949366Z",
-//             "scheduled_time": "2024-10-13T19:41:48.949372Z",
-//             "estimated_price": 100.0,
-//             "actual_price": null
-//         },
-//         {
-//             "booking_id": 6,
-//             "user_id": 7,
-//             "driver_id": null,
-//             "vehicle_type": "TRUCK",
-//             "pickup_location": "sdkj",
-//             "dropoff_location": "klfdha",
-//             "status": "PENDING",
-//             "created_at": "2024-10-13T19:41:52.979105Z",
-//             "updated_at": "2024-10-13T19:41:52.979136Z",
-//             "scheduled_time": "2024-10-13T19:41:52.979199Z",
-//             "estimated_price": 100.0,
-//             "actual_price": null
-//         },
-//         {
-//             "booking_id": 7,
-//             "user_id": 7,
-//             "driver_id": null,
-//             "vehicle_type": "VAN",
-//             "pickup_location": "sdkj",
-//             "dropoff_location": "klfdha",
-//             "status": "PENDING",
-//             "created_at": "2024-10-13T19:42:11.294679Z",
-//             "updated_at": "2024-10-13T19:42:11.294695Z",
-//             "scheduled_time": "2024-10-13T19:42:11.294702Z",
-//             "estimated_price": 100.0,
-//             "actual_price": null
-//         },
-//         {
-//             "booking_id": 8,
-//             "user_id": 7,
-//             "driver_id": null,
-//             "vehicle_type": "CAR",
-//             "pickup_location": "sdkj",
-//             "dropoff_location": "klfdha",
-//             "status": "PENDING",
-//             "created_at": "2024-10-13T19:42:31.467845Z",
-//             "updated_at": "2024-10-13T19:42:31.467878Z",
-//             "scheduled_time": "2024-10-13T19:42:31.467894Z",
-//             "estimated_price": 100.0,
-//             "actual_price": null
-//         }
-//     ]
-// }
 function MainLayout() {
   const [opened, { toggle }] = useDisclosure();
   const [bookings, setBookings] = useState([]);
@@ -167,6 +46,8 @@ function MainLayout() {
     fetchData();
   }, []);
 
+  
+
   return (
     <>
       <AppShell
@@ -179,17 +60,30 @@ function MainLayout() {
         padding="md"
       >
         <AppShell.Header>
-          <Group h="100%" px="md">
-            <Burger
-              opened={opened}
-              onClick={toggle}
-              hiddenFrom="sm"
-              size="sm"
-            />
-            <Text size="xl">Gullu Gullu</Text>
+          <Group h="100%" px="md" align="center" justify="space-between">
+            <Box>
+              <Burger
+                opened={opened}
+                onClick={toggle}
+                hiddenFrom="sm"
+                size="sm"
+              />
+              <Text size="xl">Gullu Gullu</Text>
+            </Box>
+            <Button variant="outline" color="blue" onClick={signOutHandler}>
+              Logout
+            </Button>
           </Group>
         </AppShell.Header>
-        <AppShell.Navbar p="md">
+        <AppShell.Navbar p="md"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            overflowY: "auto",
+          }}
+
+        >
           <Text size="xl">
             👋 Hi {userDetails.name}, here are your bookings!
           </Text>
