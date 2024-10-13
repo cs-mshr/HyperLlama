@@ -1,5 +1,6 @@
 from django.urls import path
 from logistics_provider_core import views
+from logistics_provider_core import admin_views
 
 urlpatterns = [
     path('bookings/', views.list_bookings, name='list_bookings'),
@@ -23,5 +24,21 @@ urlpatterns = [
 
     path('driver/profile/', views.get_driver_profile, name='get_driver_profile'),
     path('driver/profile/update/', views.update_driver_profile, name='update_driver_profile'),
+
+    path('p/vehicles/', admin_views.vehicle_list, name='vehicle-list'),
+    path('admin/vehicles/<int:vehicle_id>/', admin_views.vehicle_detail, name='vehicle-detail'),
+    path('admin/drivers/', admin_views.driver_list, name='driver-list'),
+    path('admin/drivers/<int:driver_id>/', admin_views.driver_detail, name='driver-detail'),
+    path('admin/drivers/<int:driver_id>/performance/', admin_views.driver_performance, name='driver-performance'),
+    path('admin/drivers/<int:driver_id>/location/', admin_views.driver_location, name='driver-location'),
+    path('admin/drivers/<int:driver_id>/trips/', admin_views.driver_trips, name='driver-trips'),
+    path('admin/drivers/active/', admin_views.active_drivers, name='active-drivers'),
+    path('admin/bookings/', admin_views.booking_list, name='booking-list'),
+    path('admin/bookings/stats/', admin_views.booking_stats, name='booking-stats'),
+    path('admin/trips/stats/', admin_views.trip_stats, name='trip-stats'),
+    path('admin/analytics/revenue/', admin_views.revenue_analytics, name='revenue-analytics'),
+    path('admin/analytics/custom/', admin_views.custom_analytics, name='custom-analytics'),
+    path('admin/dashboard/overview/', admin_views.dashboard_overview, name='dashboard-overview'),
+    path('admin/dashboard/charts/', admin_views.dashboard_charts, name='dashboard-charts'),
 ]
 

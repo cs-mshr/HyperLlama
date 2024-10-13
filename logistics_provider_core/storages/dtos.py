@@ -67,3 +67,12 @@ class UpdateUserDetailsReqDTO:
     email: str
     phone_number: str
     password: str
+
+
+@dataclass
+class UpdateDriverProfileReqDTO:
+    vehicle_id: str = None
+    license_number: str = None
+    phone_number: str = None
+    current_location: str = None
+    email: str = None

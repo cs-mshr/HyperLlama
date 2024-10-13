@@ -159,3 +159,13 @@ class RegisterDriverRequestSerializer(serializers.Serializer):
 
 class GetDriverDetailsRequestSerializer(serializers.Serializer):
     driver_id = serializers.IntegerField()
+
+
+class UpdateDriverProfileRequestSerializer(serializers.Serializer):
+    vehicle_id = serializers.CharField(max_length=20, required=False)
+    license_number = serializers.CharField(max_length=20, required=False)
+    phone_number = serializers.CharField(max_length=20, required=False)
+    current_location = serializers.CharField(max_length=255, required=False)
+    email = serializers.EmailField(required=False)
+
+

@@ -7,7 +7,6 @@ from django.shortcuts import get_object_or_404
 from .models import Booking, Vehicle, Location, LogisticAccountUser, Feedback, Driver
 from .serializers import (
     CreateBookingRequestSerializer,
-    BookingResponseSerializer,
     PriceEstimateRequestSerializer,
     UpdateUserProfileRequestSerializer,
     UserProfileResponseSerializer,
@@ -15,11 +14,17 @@ from .serializers import (
     BookingListRequestSerializer,
     VehicleTypeResponseSerializer,
     LocationResponseSerializer,
-    UpdateBookingStatusRequest, RegisterDriverRequestSerializer, GetDriverDetailsRequestSerializer
+    UpdateBookingStatusRequest,
+    RegisterDriverRequestSerializer,
+    GetDriverDetailsRequestSerializer,
+    UpdateDriverProfileRequestSerializer,
 )
-from .serializers import BookingSerializer, LogisticAccountUserSerializer
-from logistics_provider_core.constants import BookingStatus, DRIVER_ACTIVE_BOOKING_STATUS
-from .storages.dtos import UpdateUserDetailsReqDTO
+from .serializers import BookingSerializer
+from logistics_provider_core.constants import (
+    BookingStatus,
+    DRIVER_ACTIVE_BOOKING_STATUS,
+)
+from .storages.dtos import UpdateUserDetailsReqDTO, UpdateDriverProfileReqDTO
 
 
 @api_view(["GET"])
@@ -128,7 +133,9 @@ def user_profile(request):
     if request.method == "GET":
         UserProfileResponseSerializer(request.user)
         try:
-            from logistics_provider_core.interactors.get_user_profile import GetUserProfile
+            from logistics_provider_core.interactors.get_user_profile import (
+                GetUserProfile,
+            )
             from logistics_provider_core.storages.user_action_storage import (
                 UserActionStorage,
             )
@@ -181,7 +188,8 @@ def submit_feedback(request, booking_id):
         booking = get_object_or_404(Booking, id=booking_id, user=logistic_user)
         Feedback.objects.create(booking=booking, **serializer.validated_data)
         return Response(
-            {"message": "Feedback submitted successfully"}, status=status.HTTP_201_CREATED
+            {"message": "Feedback submitted successfully"},
+            status=status.HTTP_201_CREATED,
         )
     except Exception as e:
         response_data = {"error": str(e), "stack_trace": traceback.format_exc()}
@@ -217,12 +225,18 @@ def get_booking_request_details(request, booking_id):
 @permission_classes([IsAuthenticated])
 def accept_booking_request(request, booking_id):
     try:
-        from logistics_provider_core.interactors.accept_booking_request import AcceptBookingRequest
-        from logistics_provider_core.storages.driver_action_storage import DriverActionStorage
+        from logistics_provider_core.interactors.accept_booking_request import (
+            AcceptBookingRequest,
+        )
+        from logistics_provider_core.storages.driver_action_storage import (
+            DriverActionStorage,
+        )
 
         driver_action_storage = DriverActionStorage()
         interactor = AcceptBookingRequest(driver_action_storage=driver_action_storage)
-        response_data = interactor.accept_booking_request(booking_id=booking_id, user_id=request.user.id)
+        response_data = interactor.accept_booking_request(
+            booking_id=booking_id, user_id=request.user.id
+        )
         return Response(response_data)
     except Exception as e:
         response_data = {"error": str(e), "stack_trace": traceback.format_exc()}
@@ -240,6 +254,7 @@ def update_booking_status(request, booking_id):
     booking.save()
     return Response({"message": "Status updated", "booking_id": booking_id})
 
+
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def register_driver(request):
@@ -255,9 +270,11 @@ def register_driver(request):
             user=logistics_user_obj,
             vehicle=vehicle,
             license_number=request.data["license_number"],
-            current_location=request.data["current_location"]
+            current_location=request.data["current_location"],
         )
-        return Response({"message": "Driver registered successfully", "driver_id": driver.id})
+        return Response(
+            {"message": "Driver registered successfully", "driver_id": driver.id}
+        )
     except Exception as e:
         response_data = {"error": str(e), "stack_trace": traceback.format_exc()}
         print(response_data["stack_trace"])
@@ -291,7 +308,9 @@ def complete_booking(request, booking_id):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_current_active_booking(request):
-    bookings = Booking.objects.filter(status__in=DRIVER_ACTIVE_BOOKING_STATUS, driver__user__id=request.user.id)
+    bookings = Booking.objects.filter(
+        status__in=DRIVER_ACTIVE_BOOKING_STATUS, driver__user__id=request.user.id
+    )
     serializer = BookingSerializer(bookings, many=True)
     return Response(serializer.data)
 
@@ -303,25 +322,47 @@ def get_driver_profile(request):
     serializer.is_valid(raise_exception=True)
 
     try:
-        from logistics_provider_core.interactors.get_driver_details import GetDriverDetails
-        from logistics_provider_core.storages.driver_action_storage import DriverActionStorage
+        from logistics_provider_core.interactors.get_driver_details import (
+            GetDriverDetails,
+        )
+        from logistics_provider_core.storages.driver_action_storage import (
+            DriverActionStorage,
+        )
 
         driver_action_storage = DriverActionStorage()
         interactor = GetDriverDetails(driver_action_storage=driver_action_storage)
-        response_data = interactor.get_driver_profile_details(driver_id=request.data["driver_id"])
+        response_data = interactor.get_driver_profile_details(
+            driver_id=request.data["driver_id"]
+        )
         return Response(response_data)
     except Exception as e:
         response_data = {"error": str(e), "stack_trace": traceback.format_exc()}
         print(response_data["stack_trace"])
         return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# todo : yet to complete
+
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
 def update_driver_profile(request):
-    driver = LogisticAccountUser.objects.get(user=request.user)
-    serializer = LogisticAccountUserSerializer(driver, data=request.data, partial=True)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data)
-    return Response(serializer.errors, status=400)
+    serializer = UpdateDriverProfileRequestSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+
+    try:
+        from logistics_provider_core.interactors.update_driver_profile import (
+            UpdateDriverProfile,
+        )
+        from logistics_provider_core.storages.driver_action_storage import (
+            DriverActionStorage,
+        )
+
+        driver_action_storage = DriverActionStorage()
+        interactor = UpdateDriverProfile(driver_action_storage=driver_action_storage)
+        update_req_dto = UpdateDriverProfileReqDTO(**serializer.validated_data)
+        response_data = interactor.update_driver_profile(
+            user_id=request.user.id, update_driver_profile_req=update_req_dto
+        )
+        return Response(response_data)
+    except Exception as e:
+        response_data = {"error": str(e), "stack_trace": traceback.format_exc()}
+        print(response_data["stack_trace"])
+        return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
