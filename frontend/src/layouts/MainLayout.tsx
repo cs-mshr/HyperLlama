@@ -269,7 +269,14 @@ function BookingModal({
   };
 
   return (
-    <Modal opened={opened} onClose={close} title="Booking details" centered>
+    <Modal opened={opened} onClose={() => {
+      close();
+      setFeedback({
+        rating: 1,
+        comment: "",
+      });
+      setResFeedback(null);
+    }} title="Booking details" centered>
       <Text>Booking Modal Content</Text>
       <Text
         style={{
@@ -285,10 +292,10 @@ function BookingModal({
       <Text>Dropoff Location: {booking.dropoff_location}</Text>
       <Text>Status: {booking.status}</Text>
       <Text>Estimated Price: ₹ {booking.estimated_price}</Text>
-      {resFeedback ? (
+      {(resFeedback &&  resFeedback.length)? (
         <>
-          <Text>comment: - {resFeedback[0].comment}</Text>
-          <Rating value={resFeedback[0].rating} readOnly />
+          <Text>comment: - {resFeedback[0]?.comment}</Text>
+          <Rating value={resFeedback[0]?.rating} readOnly />
         </>
       ) : (
         <>
