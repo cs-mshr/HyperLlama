@@ -45,6 +45,7 @@ class PriceEstimationReqDTO:
 
 @dataclass
 class BookingDTO:
+    booking_id: int
     user_id: int
     driver_id: Optional[int]
     vehicle_type: str

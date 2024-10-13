@@ -75,6 +75,7 @@ class UserActionStorage:
         if booking.driver:
             driver_id = booking.driver.user.id
         return BookingDTO(
+            booking_id=booking.id,
             user_id=booking.user.id,
             driver_id=driver_id,
             vehicle_type=booking.vehicle_type,

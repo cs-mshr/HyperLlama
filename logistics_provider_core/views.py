@@ -48,7 +48,7 @@ def list_bookings(request):
         response_data = interactor.get_bookings_lists(
             user_id=request.user.id, filter_request=filter_serializer.validated_data
         )
-        return Response(response_data, status=status.HTTP_201_CREATED)
+        return Response(response_data, status=status.HTTP_200_OK)
     except Exception as e:
         response_data = {"error": str(e), "stack_trace": traceback.format_exc()}
         print(response_data["stack_trace"])
