@@ -19,7 +19,7 @@ from .serializers import (
     UpdateBookingStatusRequest,
     RegisterDriverRequestSerializer,
     GetDriverDetailsRequestSerializer,
-    UpdateDriverProfileRequestSerializer,
+    UpdateDriverProfileRequestSerializer, FeedbackSerializer,
 )
 from .serializers import BookingSerializer
 from logistics_provider_core.constants import (
@@ -402,3 +402,16 @@ def register_user(request):
 
     return Response({'key': token.key}, status=status.HTTP_201_CREATED)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_feedback(request, booking_id):
+    try:
+        feedback = Feedback.objects.filter(booking_id=booking_id)
+        serializer = FeedbackSerializer(feedback, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Feedback.DoesNotExist:
+        return Response({'error': 'Feedback not found'}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        response_data = {"error": str(e), "stack_trace": traceback.format_exc()}
+        print(response_data["stack_trace"])
+        return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

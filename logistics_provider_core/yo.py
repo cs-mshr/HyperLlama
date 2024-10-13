@@ -1,11 +1,17 @@
-import redis
+import psycopg2
+
+
+def main():
+    conn = psycopg2.connect('postgres://avnadmin:AVNS_PYekk63YoqYqCl70zTW@himanshu-22500-himanshu22500-d8f2.l.aivencloud.com:10817/defaultdb?sslmode=require')
+
+    query_sql = 'SELECT VERSION()'
+
+    cur = conn.cursor()
+    cur.execute(query_sql)
+
+    version = cur.fetchone()[0]
+    print(version)
 
 
 if __name__ == "__main__":
-    r = redis.Redis(host='localhost', port=6379, db=1)
-    keys = r.keys('*')
-    print("Keys in Redis:", keys)
-
-    key = 'q:9581b657f1997de5e05543e099889fe2'  # Replace with an actual key
-    value = r.get(key)
-    print(f"Value for {key}:", value)
+    main()
