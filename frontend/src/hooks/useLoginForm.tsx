@@ -9,6 +9,7 @@ import { useId } from "@mantine/hooks";
 import { useEffect, useMemo } from "react";
 import { isAxiosError } from "axios";
 import _ from "lodash";
+import { Axios } from "@/api/axios";
 
 export const useLoginForm = () => {
   const notificationId = useId();
@@ -34,18 +35,18 @@ export const useLoginForm = () => {
     initialValues: {
       username: queryParams.username ?? "",
       password: queryParams.password ?? "",
-      email: queryParams.email ?? ""
+      email: queryParams.email ?? "",
     },
     validate: {
       username: (value) => (value ? null : ""),
       password: (value) => (value ? null : ""),
-      email: (value) => (value ? null : "") 
+      email: (value) => (value ? null : ""),
     },
     transformValues: (values) => {
       return {
         username: values.username.trim(),
         password: values.password.trim(),
-        email: values.email.trim()
+        email: values.email.trim(),
       };
     },
   });
@@ -57,22 +58,30 @@ export const useLoginForm = () => {
         setError(null);
         hideNotification(notificationId);
 
-        const res = await loginIn(data.username, data.password,data.email) as { status: number };
+        const res = (await loginIn(
+          data.username,
+          data.password,
+          data.email
+        )) as any;
 
+  
         switch (res.status) {
           case StatusCodes.OK: {
             const pathname = location.state?.from?.pathname || HOME_ROUTE;
-            // set jwt token in local storage
-            localStorage.setItem("jwt", "dummy_token");
-            nav(
-              {
-                pathname,
-              },
-              { replace: true }
-            );
+            const token = res.data;
+            if (token.key) {
+              localStorage.setItem("jwt", token.key);
+              nav(
+                {
+                  pathname,
+                },
+                { replace: true }
+              );
+            }
 
             break;
           }
+
           case StatusCodes.UNAUTHORIZED: {
             setError("Invalid credential");
             break;
@@ -110,31 +119,32 @@ export const useLoginForm = () => {
 };
 
 const getQueryParam = () => {
-	const location = useLocation();
-	return useMemo(() => {
-		const searchParams = new URLSearchParams(location.search);
-		const query = searchParams.get('q');
-		if (!query) return {};
-		const base64 = query.replaceAll('.', '+').replaceAll('_', '/').replaceAll('-', '=');
-		const decoded = atob(base64);
-		try {
-			const obj = JSON.parse(decoded);
-			return obj;
-		} catch (e) {
-			return {};
-		}
-	}, [location]);
+  const location = useLocation();
+  return useMemo(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const query = searchParams.get("q");
+    if (!query) return {};
+    const base64 = query
+      .replaceAll(".", "+")
+      .replaceAll("_", "/")
+      .replaceAll("-", "=");
+    const decoded = atob(base64);
+    try {
+      const obj = JSON.parse(decoded);
+      return obj;
+    } catch (e) {
+      return {};
+    }
+  }, [location]);
 };
 
-
-const loginIn = async (username: string, password: string,email:string) => {
-  const url = "http://localhost:8000/dj-rest-auth/login/";
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ username, password , email: email}),
+const loginIn = async (username: string, password: string, email: string) => {
+  const url = "/dj-rest-auth/login/";
+  const res = await Axios().post(url, {
+    username,
+    password,
+    email,
   });
+  console.log(res);
   return res;
-}
+};

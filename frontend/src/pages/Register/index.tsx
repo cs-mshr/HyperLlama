@@ -48,7 +48,7 @@ const Login: FC = () => {
             alignItems: "center",
           }}
         >
-          <Text size={"xl"}>Uber Uber</Text>
+          <Text size={"xl"}>Gullu Gullu</Text>
           <Text color="dimmed" size={"md"}>
             The best way to get around
           </Text>
@@ -83,6 +83,7 @@ const Login: FC = () => {
                 label="Username"
                 withAsterisk
                 {...getInputProps("username")}
+                error={getInputProps("username").error}
               />
               <TextInput
                 mt="sm"
@@ -91,6 +92,7 @@ const Login: FC = () => {
                 label="Email"
                 withAsterisk
                 {...getInputProps("email")}
+                error={getInputProps("email").error}
               />
               <PasswordInput
                 mt="lg"
@@ -99,6 +101,7 @@ const Login: FC = () => {
                 label="Password"
                 withAsterisk
                 {...getInputProps("password")}
+                error={getInputProps("password").error}
               />
               <Button
                 type="submit"

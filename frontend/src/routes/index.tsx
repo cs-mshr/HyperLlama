@@ -10,16 +10,19 @@ import type { FC } from "react";
 import { Route, Routes } from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
 import { HomeElement, LoginElement, RegisterElement } from "./elements";
+import MainLayout from "@/layouts/MainLayout";
 
 const AppRouter: FC = () => {
   return (
     <FullPageLayout>
       <Routes>
         <Route element={<PrivateRoute />}>
-          <Route path={HOME_ROUTE} element={<HomeElement />} />
+          <Route element={<MainLayout />}>
+            <Route path={HOME_ROUTE} element={<HomeElement />} />
+          </Route>
         </Route>
 
-        <Route path={REGISTER_ROUTE} element={< RegisterElement/>} />
+        <Route path={REGISTER_ROUTE} element={<RegisterElement />} />
         <Route path={LOGIN_ROUTE} element={<LoginElement />} />
         <Route path={ALL_ROUTE} element={<NotFound />} />
       </Routes>

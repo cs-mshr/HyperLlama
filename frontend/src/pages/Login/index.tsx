@@ -48,7 +48,7 @@ const Login: FC = () => {
             alignItems: "center",
           }}
         >
-          <Text size={"xl"}>Uber Uber</Text>
+          <Text size={"xl"}>Gullu Gullu</Text>
           <Text color="dimmed" size={"md"}>
             The best way to get around
           </Text>
@@ -116,13 +116,7 @@ const Login: FC = () => {
                 style={{ width: "100%" }}
               />
 
-              <Button
-                component="a"
-                href="/register"
-                variant="outline"
-             
-               
-              >
+              <Button component="a" href="/register" variant="outline">
                 Register
               </Button>
             </form>

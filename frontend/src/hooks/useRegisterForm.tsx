@@ -9,6 +9,8 @@ import { useId } from "@mantine/hooks";
 import { useEffect, useMemo } from "react";
 import { isAxiosError } from "axios";
 import _ from "lodash";
+import { Axios } from "@/api/axios";
+
 
 export const useRegisterForm = () => {
   const notificationId = useId();
@@ -61,24 +63,58 @@ export const useRegisterForm = () => {
           data.username,
           data.password,
           data.email
-        )) as { status: number };
+        )) as any;
 
         switch (res.status) {
           case StatusCodes.OK: {
             const pathname = location.state?.from?.pathname || HOME_ROUTE;
             // set jwt token in local storage
-            localStorage.setItem("jwt", "dummy_token");
-            nav(
-              {
-                pathname,
-              },
-              { replace: true }
-            );
+            const token = await res.json();
+            if (token.key) {
+              localStorage.setItem("jwt", token.key);
+              nav(
+                {
+                  pathname,
+                },
+                { replace: true }
+              );
+            }
 
             break;
           }
+          //204
+          case StatusCodes.NO_CONTENT: {
+           
+            const pathname = location.state?.from?.pathname || HOME_ROUTE;
+            // set jwt token in local storage
+            const token = await res.json();
+            if (token.key) {
+              localStorage.setItem("jwt", token.key);
+              nav(
+                {
+                  pathname,
+                },
+                { replace: true }
+              );
+            }
+
+            break;
+          }
+            
+          
+            
           case StatusCodes.UNAUTHORIZED: {
             setError("Invalid credential");
+            break;
+          }
+          case StatusCodes.BAD_REQUEST: {
+            setError("Invalid request");
+            const data = await res.json();
+            form.setErrors({
+              username: data?.username || "",
+              password: data?.password1 || "",
+              email: data?.email || "",
+            });
             break;
           }
           default: {
@@ -86,9 +122,23 @@ export const useRegisterForm = () => {
           }
         }
       } catch (err) {
+        console.error(err);
+        console.log("dewfiukfwkjwfknfk");
         if (isAxiosError(err)) {
           const errStatus = err.response?.status;
-          if (errStatus === 401) {
+          if (errStatus === 400) {
+            setError("Invalid request");
+            form.setErrors({
+              username: err.response?.data?.username || "Invalid request",
+              password: err.response?.data?.password || "Invalid request",
+              email: err.response?.data?.email || "Invalid request",
+            });
+
+
+            notifyError({
+              message: "The request failed with a status code of 400",
+            });
+          } else if (errStatus === 401) {
             setError("Unauthorized User");
             notifyError({
               message: "The request failed with a status code of 401",
@@ -134,18 +184,12 @@ const getQueryParam = () => {
 };
 
 const loginIn = async (username: string, password: string, email: string) => {
-  const url = "http://localhost:8000/dj-rest-auth/registration/";
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      username,
-      password1: password,
-      password2: password,
-      email: email,
-    }),
+  const url = "/logistics/register/";
+  const res = await Axios().post(url, {
+    username,
+    password1: password,
+    password2: password,
+    email: email,
   });
   return res;
 };
