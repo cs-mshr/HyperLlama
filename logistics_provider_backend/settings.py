@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'logistics_provider_core',
     'django_extensions',
     'channels',
+    'cacheops',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -59,6 +61,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
     'logistics_provider_backend.middleware.DisableCSRF',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'logistics_provider_backend.urls'
@@ -102,6 +105,26 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+}
+
+CACHEOPS_REDIS = {
+    'host': 'localhost',  # Redis server address
+    'port': 6379,         # Redis port
+    'db': 1,              # Redis database number
+}
+
+CACHEOPS = {
+    'auth.user': {'ops': 'all', 'timeout': 60*15},  # Cache User model for 15 minutes
+    'your_app.logisticaccountuser': {'ops': 'all', 'timeout': 60*15},
+    'your_app.vehicle': {'ops': 'all', 'timeout': 60*30},
+    'your_app.driver': {'ops': 'all', 'timeout': 60*15},
+    'your_app.booking': {'ops': 'all', 'timeout': 60*5},  # Shorter timeout due to frequent status changes
+    'your_app.trip': {'ops': 'all', 'timeout': 60*15},
+    'your_app.location': {'ops': 'all', 'timeout': 60*5},  # Shorter timeout for real-time data
+    'your_app.priceestimation': {'ops': 'all', 'timeout': 60*60},  # Longer timeout for less frequently changing data
+    'your_app.driverperformance': {'ops': 'all', 'timeout': 60*30},
+    'your_app.analytics': {'ops': 'all', 'timeout': 60*60},  # Longer timeout for analytics data
+    'your_app.feedback': {'ops': 'all', 'timeout': 60*15},
 }
 
 
@@ -153,3 +176,7 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]
