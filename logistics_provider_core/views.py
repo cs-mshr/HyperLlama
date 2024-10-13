@@ -24,6 +24,8 @@ from logistics_provider_core.constants import (
     BookingStatus,
     DRIVER_ACTIVE_BOOKING_STATUS,
 )
+from django.http import JsonResponse
+from .celery_handlers import process_location_update
 from .storages.dtos import UpdateUserDetailsReqDTO, UpdateDriverProfileReqDTO
 
 
@@ -366,3 +368,13 @@ def update_driver_profile(request):
         response_data = {"error": str(e), "stack_trace": traceback.format_exc()}
         print(response_data["stack_trace"])
         return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def update_driver_location(request):
+    latitude = request.data['latitude']
+    longitude = request.data['longitude']
+
+    process_location_update.delay(request.user.id, latitude, longitude)
+
+    return JsonResponse({'status': 'Location update received'})

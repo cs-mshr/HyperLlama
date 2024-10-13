@@ -1,6 +1,9 @@
 from django.urls import path
 from logistics_provider_core import views
 from logistics_provider_core import admin_views
+from django.urls import re_path
+from . import consumers
+
 
 urlpatterns = [
     path('bookings/', views.list_bookings, name='list_bookings'),
@@ -24,6 +27,7 @@ urlpatterns = [
 
     path('driver/profile/', views.get_driver_profile, name='get_driver_profile'),
     path('driver/profile/update/', views.update_driver_profile, name='update_driver_profile'),
+    path('driver/location/update/', views.update_driver_location, name='update_driver_location'),
 
     path('p/vehicles/', admin_views.vehicle_list, name='vehicle-list'),
     path('admin/vehicles/<int:vehicle_id>/', admin_views.vehicle_detail, name='vehicle-detail'),
@@ -40,5 +44,9 @@ urlpatterns = [
     path('admin/analytics/custom/', admin_views.custom_analytics, name='custom-analytics'),
     path('admin/dashboard/overview/', admin_views.dashboard_overview, name='dashboard-overview'),
     path('admin/dashboard/charts/', admin_views.dashboard_charts, name='dashboard-charts'),
+]
+
+websocket_urlpatterns = [
+    re_path(r'ws/some_path/$', consumers.MyConsumer.as_asgi()),
 ]
 

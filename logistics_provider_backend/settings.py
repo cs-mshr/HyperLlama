@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'logistics_provider_core',
     'django_extensions',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -79,6 +80,18 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'logistics_provider_backend.wsgi.application'
+ASGI_APPLICATION = 'logistics_provider_backend.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
+
+
 
 
 # Database
@@ -133,3 +146,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 SITE_ID = 1
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
