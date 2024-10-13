@@ -178,5 +178,8 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
+    "http://localhost",
+    "http://localhost:*"
 ]
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+EMAIL_VERIFICATION = False
