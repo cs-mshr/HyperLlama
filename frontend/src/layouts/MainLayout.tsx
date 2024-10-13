@@ -249,7 +249,7 @@ function BookingModal({
   const [resFeedback, setResFeedback] = useState<any>(null);
   useEffect(() => {
     fetchData();
-  }, [booking]);
+  }, [booking,opened]);
 
   const fetchData = async () => {
     if (booking.booking_id) {
