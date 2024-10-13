@@ -248,35 +248,40 @@ function BookingModal({
   );
   const [resFeedback, setResFeedback] = useState<any>(null);
   useEffect(() => {
-    const fetchData = async () => {
-      if (booking.booking_id) {
-        const res = await Axios().get(
-          `logistics/bookings/${booking.booking_id}/feedback/get`
-        );
-        setResFeedback(res.data);
-      }
-    };
     fetchData();
   }, [booking]);
 
+  const fetchData = async () => {
+    if (booking.booking_id) {
+      const res = await Axios().get(
+        `logistics/bookings/${booking.booking_id}/feedback/get`
+      );
+      setResFeedback(res.data);
+    }
+  };
   const handleFeedback = async () => {
-    const res = await Axios().post(
+    await Axios().post(
       `logistics/bookings/${booking.booking_id}/feedback/`,
 
       feedback
     );
-    console.log(res.data);
+    fetchData();
   };
 
   return (
-    <Modal opened={opened} onClose={() => {
-      close();
-      setFeedback({
-        rating: 1,
-        comment: "",
-      });
-      setResFeedback(null);
-    }} title="Booking details" centered>
+    <Modal
+      opened={opened}
+      onClose={() => {
+        close();
+        setFeedback({
+          rating: 1,
+          comment: "",
+        });
+        setResFeedback(null);
+      }}
+      title="Booking details"
+      centered
+    >
       <Text>Booking Modal Content</Text>
       <Text
         style={{
@@ -292,7 +297,7 @@ function BookingModal({
       <Text>Dropoff Location: {booking.dropoff_location}</Text>
       <Text>Status: {booking.status}</Text>
       <Text>Estimated Price: ₹ {booking.estimated_price}</Text>
-      {(resFeedback &&  resFeedback.length)? (
+      {resFeedback && resFeedback.length ? (
         <>
           <Text>comment: - {resFeedback[0]?.comment}</Text>
           <Rating value={resFeedback[0]?.rating} readOnly />
