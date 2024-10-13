@@ -5,3 +5,4 @@ __pycache__/
 *.pyc
 logistics_provider_backend/__pycache__/
 logistics_provider_core/__pycache__/
+.env

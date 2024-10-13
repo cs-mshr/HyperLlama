@@ -19,7 +19,8 @@ from .serializers import (
     UpdateBookingStatusRequest,
     RegisterDriverRequestSerializer,
     GetDriverDetailsRequestSerializer,
-    UpdateDriverProfileRequestSerializer, FeedbackSerializer,
+    UpdateDriverProfileRequestSerializer,
+    FeedbackSerializer,
 )
 from .serializers import BookingSerializer
 from logistics_provider_core.constants import (
@@ -372,45 +373,53 @@ def update_driver_profile(request):
         print(response_data["stack_trace"])
         return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def update_driver_location(request):
-    latitude = request.data['latitude']
-    longitude = request.data['longitude']
+    latitude = request.data["latitude"]
+    longitude = request.data["longitude"]
 
     process_location_update.delay(request.user.id, latitude, longitude)
 
-    return JsonResponse({'status': 'Location update received'})
+    return JsonResponse({"status": "Location update received"})
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 def register_user(request):
-    username = request.data.get('username')
-    password1 = request.data.get('password1')
-    password2 = request.data.get('password2')
-    email = request.data.get('email')
+    username = request.data.get("username")
+    password1 = request.data.get("password1")
+    password2 = request.data.get("password2")
+    email = request.data.get("email")
 
     if password1 != password2:
-        return Response({'error': 'Passwords do not match'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "Passwords do not match"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     if User.objects.filter(username=username).exists():
-        return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "Username already exists"}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     user = User.objects.create_user(username=username, password=password1, email=email)
     token, created = Token.objects.get_or_create(user=user)
     user_signed_up.send(sender=User, request=request, user=user)
 
-    return Response({'key': token.key}, status=status.HTTP_201_CREATED)
+    return Response({"key": token.key}, status=status.HTTP_201_CREATED)
 
-@api_view(['GET'])
+
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_feedback(request, booking_id):
     try:
         feedback = Feedback.objects.filter(booking_id=booking_id)
-        serializer = FeedbackSerializer(feedback, many=True)
+        serializer = FeedbackSerializer(feedback)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Feedback.DoesNotExist:
-        return Response({'error': 'Feedback not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {"error": "Feedback not found"}, status=status.HTTP_404_NOT_FOUND
+        )
     except Exception as e:
         response_data = {"error": str(e), "stack_trace": traceback.format_exc()}
         print(response_data["stack_trace"])
