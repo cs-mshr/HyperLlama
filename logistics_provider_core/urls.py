@@ -11,6 +11,7 @@ urlpatterns = [
     path('users/profile/', views.user_profile, name='user_profile'),
     path('bookings/<int:booking_id>/feedback/', views.submit_feedback, name='submit_feedback'),
     path('vehicle-types/', views.list_vehicle_types, name='list_vehicle_types'),
+    path('register/', views.register_user, name='register_user'),
 
 
 

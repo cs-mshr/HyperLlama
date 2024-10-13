@@ -1,5 +1,7 @@
 import traceback
 from rest_framework import status
+from rest_framework.authtoken.admin import User
+from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -27,6 +29,7 @@ from logistics_provider_core.constants import (
 from django.http import JsonResponse
 from .celery_handlers import process_location_update
 from .storages.dtos import UpdateUserDetailsReqDTO, UpdateDriverProfileReqDTO
+from allauth.account.signals import user_signed_up
 
 
 @api_view(["GET"])
@@ -378,3 +381,24 @@ def update_driver_location(request):
     process_location_update.delay(request.user.id, latitude, longitude)
 
     return JsonResponse({'status': 'Location update received'})
+
+
+@api_view(['POST'])
+def register_user(request):
+    username = request.data.get('username')
+    password1 = request.data.get('password1')
+    password2 = request.data.get('password2')
+    email = request.data.get('email')
+
+    if password1 != password2:
+        return Response({'error': 'Passwords do not match'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if User.objects.filter(username=username).exists():
+        return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user = User.objects.create_user(username=username, password=password1, email=email)
+    token, created = Token.objects.get_or_create(user=user)
+    user_signed_up.send(sender=User, request=request, user=user)
+
+    return Response({'key': token.key}, status=status.HTTP_201_CREATED)
+
