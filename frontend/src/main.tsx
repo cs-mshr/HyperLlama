@@ -5,7 +5,6 @@ import "@mantine/notifications/styles.css";
 import "@mantine/dates/styles.css";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
-import "./index.css";
 import Mantine from "./components/Mantine/index.tsx";
 import { BrowserRouter } from "react-router-dom";
 
