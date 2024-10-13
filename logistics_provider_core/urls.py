@@ -1,8 +1,6 @@
 from django.urls import path
 from logistics_provider_core import views
 from logistics_provider_core import admin_views
-from django.urls import re_path
-from . import consumers
 
 
 urlpatterns = [
@@ -44,9 +42,5 @@ urlpatterns = [
     path('admin/analytics/custom/', admin_views.custom_analytics, name='custom-analytics'),
     path('admin/dashboard/overview/', admin_views.dashboard_overview, name='dashboard-overview'),
     path('admin/dashboard/charts/', admin_views.dashboard_charts, name='dashboard-charts'),
-]
-
-websocket_urlpatterns = [
-    re_path(r'ws/some_path/$', consumers.MyConsumer.as_asgi()),
 ]
 
