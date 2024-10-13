@@ -414,7 +414,7 @@ def register_user(request):
 def get_feedback(request, booking_id):
     try:
         feedback = Feedback.objects.filter(booking_id=booking_id)
-        serializer = FeedbackSerializer(feedback)
+        serializer = FeedbackSerializer(feedback, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Feedback.DoesNotExist:
         return Response(
