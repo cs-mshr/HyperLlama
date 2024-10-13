@@ -51,7 +51,7 @@ export const signOutHandler = async () => {
   const loginPage = `${window.location.origin}/login`;
   const currentPage = window.location.href;
   try {
-    await Axios().post("/dj-rest-auth/logout/");
+    // await Axios().post("/dj-rest-auth/logout/");
     localStorage.removeItem("jwt");
     if (currentPage !== loginPage) {
       window.location.href = loginPage;
