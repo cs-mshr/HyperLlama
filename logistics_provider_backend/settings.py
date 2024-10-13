@@ -126,7 +126,7 @@ DATABASES = {
 
 CACHEOPS_REDIS = {
     'host': os.getenv("REDIS_HOST", "localhost"),  # Redis server address
-    'port': os.getenv("REDIS_PORT",637),
+    'port': os.getenv("REDIS_PORT",6379),
     'db': 1,
 }
 
