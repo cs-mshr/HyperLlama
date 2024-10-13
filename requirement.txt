@@ -43,12 +43,14 @@ pathspec==0.12.1
 platformdirs==4.3.6
 prometheus_client==0.21.0
 prompt_toolkit==3.0.48
+psycopg2==2.9.9
 pyasn1==0.6.1
 pyasn1_modules==0.4.1
 pycparser==2.22
 PyJWT==2.9.0
 pyOpenSSL==24.2.1
 python-dateutil==2.9.0.post0
+python-dotenv==1.0.1
 python3-openid==3.2.0
 pytz==2024.2
 redis==5.1.1
