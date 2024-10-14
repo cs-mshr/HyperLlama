@@ -9,7 +9,8 @@ from logistics_provider_core.models import Location, Driver
 
 
 @shared_task
-def process_location_update(driver_id, latitude, longitude):
+def process_location_update(user_id, latitude, longitude):
+    driver_id = Driver.objects.get(user__user__id=user_id).id
     is_location_updated = add_new_location_in_db(
         driver_id=driver_id, latitude=latitude, longitude=longitude
     )
@@ -27,7 +28,7 @@ def process_location_update(driver_id, latitude, longitude):
 
 
 def add_new_location_in_db(driver_id, latitude, longitude) -> bool:
-    driver = Driver.objects.get(user__user__id=driver_id)
+    driver = Driver.objects.get(id=driver_id)
 
     last_location = (
         Location.objects.filter(driver=driver).order_by("-timestamp").first()

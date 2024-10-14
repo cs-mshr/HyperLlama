@@ -1,39 +1,60 @@
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 interface Location {
   latitude: number;
   longitude: number;
 }
 
-const DriverLocation: React.FC = () => {
+const RecieveBookingLiveLocation: React.FC = () => {
+  const { bookingId } = useParams<{ bookingId: string }>();
   const [location, setLocation] = useState<Location | null>(null);
-  const driverId = 26; // Hardcoded driver_id
+  const [driverId, setDriverId] = useState<number | null>(null);
 
   useEffect(() => {
-    const ws = new WebSocket(`ws://localhost:8000/ws/get_driver/location/${driverId}/`);
-
-    ws.onopen = () => {
-      console.log('WebSocket connection established');
-    };
-
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'location_update') {
-        setLocation(data.location);
+    const fetchDriverId = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`http://127.0.0.1:8000/logistics/bookings/${bookingId}/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setDriverId(response.data.driver);
+      } catch (error) {
+        console.error('Error fetching booking details:', error);
       }
     };
 
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
+    fetchDriverId();
+  }, [bookingId]);
 
-    ws.onclose = () => {
-      console.log('WebSocket connection closed');
-    };
+  useEffect(() => {
+    if (driverId !== null) {
+      const ws = new WebSocket(`ws://localhost:8000/ws/get_driver/location/${driverId}/`);
 
-    return () => {
-      ws.close();
-    };
+      ws.onopen = () => {
+        console.log('WebSocket connection established');
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'location_update') {
+          setLocation(data.location);
+        }
+      };
+
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+      };
+
+      ws.onclose = () => {
+        console.log('WebSocket connection closed');
+      };
+
+      return () => {
+        ws.close();
+      };
+    }
   }, [driverId]);
 
   return (
@@ -51,4 +72,4 @@ const DriverLocation: React.FC = () => {
   );
 };
 
-export default DriverLocation;
+export default RecieveBookingLiveLocation;

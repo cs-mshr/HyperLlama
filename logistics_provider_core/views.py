@@ -424,3 +424,16 @@ def get_feedback(request, booking_id):
         response_data = {"error": str(e), "stack_trace": traceback.format_exc()}
         print(response_data["stack_trace"])
         return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_booking_details(request, booking_id):
+    try:
+        booking = Booking.objects.get(id=booking_id)
+        serializer = BookingSerializer(booking)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        response_data = {"error": str(e), "stack_trace": traceback.format_exc()}
+        print(response_data["stack_trace"])
+        return Response(response_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
