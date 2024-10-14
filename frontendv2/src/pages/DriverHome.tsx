@@ -37,7 +37,7 @@ interface DriverData {
 
 const DriverHome: React.FC = () => {
   const [driverData, setDriverData] = useState<DriverData | null>(null);
-  const [acceptedBooking, setAcceptedBooking] = useState<Booking | null>(null);
+  const [acceptedBookings, setAcceptedBookings] = useState<Booking[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,8 +49,10 @@ const DriverHome: React.FC = () => {
         });
         setDriverData(response.data);
 
-        const accepted = response.data.bookings.find((booking: Booking) => booking.status === 'ACCEPTED');
-        setAcceptedBooking(accepted || null);
+        const accepted = response.data.bookings.filter((booking: Booking) =>
+          ['ACCEPTED', 'EN_ROUTE', 'PICKED_UP'].includes(booking.status)
+        );
+        setAcceptedBookings(accepted);
       } catch (error) {
         console.error('Error fetching driver data:', error);
       }
@@ -72,10 +74,12 @@ const DriverHome: React.FC = () => {
         <p>License Number: {driverData.driver.license_number}</p>
         <p>Current Location: {driverData.driver.current_location}</p>
       </div>
-      {acceptedBooking ? (
+      {acceptedBookings.length > 0 ? (
         <div>
-          <h2 className="text-2xl font-bold">Accepted Booking</h2>
-          <BookingDetails booking={acceptedBooking} />
+          <h2 className="text-2xl font-bold">Accepted Bookings</h2>
+          {acceptedBookings.map((booking) => (
+            <BookingDetails key={booking.id} booking={booking} />
+          ))}
         </div>
       ) : (
         <div>

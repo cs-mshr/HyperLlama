@@ -11,7 +11,8 @@ import DriverHome from "./pages/DriverHome.tsx";
 import CreateNewBooking from "./pages/CreateNewBooking.tsx";
 import AvailableBookings from "./pages/AvailableBookings.tsx";
 import RegisterDriver from "./pages/RegisterDriver.tsx";
-import BookingLiveLocation from "./pages/BookingLiveLocation.tsx";
+import SendBookingLiveLocation from "./pages/SendBookingLiveLocation.tsx";
+import RecieveBookingLiveLocation from "./pages/RecieveBookingLiveLocation.tsx";
 
 function App() {
   return (
@@ -31,7 +32,8 @@ function App() {
             <Route path="/home/driver" element={<DriverHome />} />
             <Route path="/bookings/available" element={<AvailableBookings />}/>
             <Route path="/register/driver" element={<RegisterDriver />} />
-            <Route path="booking/:bookingId/location" element={<BookingLiveLocation />} />
+            <Route path="booking/:bookingId/location" element={<SendBookingLiveLocation />} />
+            <Route path="booking/:bookingId/driver-location" element={<RecieveBookingLiveLocation />} />
           </Routes>
         </main>
       </div>

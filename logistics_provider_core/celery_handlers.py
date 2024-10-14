@@ -14,7 +14,7 @@ def process_location_update(driver_id, latitude, longitude):
         driver_id=driver_id, latitude=latitude, longitude=longitude
     )
     if not is_location_updated:
-        return
+        pass
 
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(

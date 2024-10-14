@@ -7,7 +7,7 @@ interface LocationData {
   timestamp: number;
 }
 
-const BookingLiveLocation: React.FC = () => {
+const SendBookingLiveLocation: React.FC = () => {
   const [locationData, setLocationData] = useState<LocationData[]>([]);
 
   useEffect(() => {
@@ -87,4 +87,4 @@ const BookingLiveLocation: React.FC = () => {
   );
 };
 
-export default BookingLiveLocation;
+export default SendBookingLiveLocation;
