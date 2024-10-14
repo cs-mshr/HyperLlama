@@ -15,7 +15,7 @@ class UserActionStorage:
         self, user_id:int, from_date: datetime, to_date: datetime, status: Optional[str]
     ) -> List[BookingData]:
         queryset = Booking.objects.filter(
-            scheduled_time__gte=from_date, scheduled_time__lte=to_date, user__id=user_id
+            scheduled_time__gte=from_date, scheduled_time__lte=to_date, user__user__id=user_id
         )
         if status is not None:
             queryset = queryset.filter(status=status)

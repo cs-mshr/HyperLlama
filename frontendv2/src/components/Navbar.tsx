@@ -38,6 +38,7 @@ const Navbar: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
       localStorage.removeItem('token');
+      setUserProfile(null);
       navigate('/login');
     } catch (error) {
       console.error('Logout failed:', error);
@@ -52,7 +53,7 @@ const Navbar: React.FC = () => {
           <span className="text-xl font-bold">LogiTrack</span>
         </Link>
         <div className="space-x-4">
-          {userProfile && (
+          {userProfile ? (
             <>
               <Link to="/profile" className="hover:text-sea-pink">Profile</Link>
               {userProfile.is_admin && (
@@ -74,11 +75,14 @@ const Navbar: React.FC = () => {
                   <Link to="/bookings" className="hover:text-sea-pink">Bookings</Link>
                 </>
               )}
+              <button onClick={handleLogout} className="hover:text-sea-pink">Logout</button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="hover:text-sea-pink">Login</Link>
+              <Link to="/register" className="hover:text-sea-pink">Register</Link>
             </>
           )}
-          <Link to="/login" className="hover:text-sea-pink">Login</Link>
-          <Link to="/register" className="hover:text-sea-pink">Register</Link>
-          <button onClick={handleLogout} className="hover:text-sea-pink">Logout</button>
         </div>
       </div>
     </nav>

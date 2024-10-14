@@ -335,7 +335,8 @@ def get_driver_profile(request):
 
         driver_action_storage = DriverActionStorage()
         interactor = GetDriverDetails(driver_action_storage=driver_action_storage)
-        driver_id = Driver.objects.get(user__user__id=request.user.id).id
+        logistics_user = LogisticAccountUser.objects.get(user=request.user)
+        driver_id = Driver.objects.get(user=logistics_user).id
         response_data = interactor.get_driver_profile_details(
             driver_id=driver_id
         )

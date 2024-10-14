@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import BookingDetails from '../components/BookingDetails';
+import FeedbackDetails from "../components/FeedBackDetails.tsx";
 
 interface Booking {
   id: number;
@@ -86,11 +88,7 @@ const DriverHome: React.FC = () => {
       <div className="mt-6">
         <h2 className="text-2xl font-bold">Feedbacks</h2>
         {driverData.feedbacks.map((feedback) => (
-          <div key={feedback.id} className="mb-4">
-            <p>Booking ID: {feedback.booking}</p>
-            <p>Rating: {feedback.rating}</p>
-            <p>Comment: {feedback.comment}</p>
-          </div>
+          <FeedbackDetails key={feedback.id} feedback={feedback} />
         ))}
       </div>
       <button
@@ -99,20 +97,6 @@ const DriverHome: React.FC = () => {
       >
         Show Available Bookings
       </button>
-    </div>
-  );
-};
-
-const BookingDetails: React.FC<{ booking: Booking }> = ({ booking }) => {
-  return (
-    <div className="mb-4 p-4 border rounded shadow">
-      <p>ID: {booking.id}</p>
-      <p>Pickup Location: {booking.pickup_location}</p>
-      <p>Dropoff Location: {booking.dropoff_location}</p>
-      <p>Vehicle Type: {booking.vehicle_type}</p>
-      <p>Scheduled Time: {new Date(booking.scheduled_time).toLocaleString()}</p>
-      <p>Status: {booking.status}</p>
-      <p>Estimated Price: ${booking.estimated_price}</p>
     </div>
   );
 };

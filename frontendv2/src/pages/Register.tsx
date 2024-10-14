@@ -19,7 +19,7 @@ const Register: React.FC = () => {
         password2
       });
       localStorage.setItem('token', response.data.key);
-      navigate('/dashboard');
+      navigate('/login');
     } catch (error) {
       console.error('Registration failed:', error);
       // Handle error (show message to user)
