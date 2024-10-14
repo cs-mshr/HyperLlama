@@ -90,11 +90,13 @@ class UserActionStorage:
         )
 
     def _get_user_dto(self, user):
+        is_driver = Driver.objects.filter(user=user).exists()
         return UserData(
             id = user.id,
             phone_number=user.phone_number,
             name=user.user.username,
             is_admin=user.is_admin,
+            is_driver=is_driver
         )
 
     def get_is_email_already_taken(self, email, user_id:int):
