@@ -128,6 +128,7 @@ CACHEOPS_REDIS = {
     'host': os.getenv("REDIS_HOST", "localhost"),  # Redis server address
     'port': os.getenv("REDIS_PORT",6379),
     'db': 1,
+    'password': os.getenv("REDIS_PASSWORD", ""),
 }
 
 CACHEOPS = {

@@ -2,6 +2,8 @@ from django.utils.deprecation import MiddlewareMixin
 from django.contrib.auth.models import AnonymousUser
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
+from django.urls import resolve
+
 
 User = get_user_model()
 
@@ -11,6 +13,9 @@ class DisableCSRF(MiddlewareMixin):
 
 class CustomAuthenticationMiddleware(MiddlewareMixin):
     def process_request(self, request):
+        if resolve(request.path_info).app_name == 'admin':
+            return
+
         auth_header = request.META.get('HTTP_AUTHORIZATION')
         if auth_header and auth_header.startswith('Bearer '):
             token_key = auth_header.split(' ')[1]
