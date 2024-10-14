@@ -8,6 +8,7 @@ import Bookings from './pages/Bookings';
 import Profile from './pages/Profile';
 import LogisticsDashboard from "./pages/AnalyticsPage";
 import DriverHome from "./pages/DriverHome.tsx";
+import CreateNewBooking from "./pages/CreateNewBooking.tsx";
 
 function App() {
   return (
@@ -24,7 +25,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/analytics" element={<LogisticsDashboard />} />
             <Route path="/home/driver" element={<DriverHome />} />
-            {/*<Route path="booking/new" element={<CreateNewBooking />}/>*/}
+            <Route path="booking/new" element={<CreateNewBooking />}/>
             {/*<Route path="booking/:bookingId/location" element={<BookingLiveLocation />} />*/}
           </Routes>
         </main>
