@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -8,7 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Bookings from './pages/Bookings';
 import Profile from './pages/Profile';
 import LogisticsDashboard from "./pages/AnalyticsPage";
-
+import DriverHome from "./pages/DriverHome.tsx";
 
 function App() {
   return (
@@ -24,6 +23,9 @@ function App() {
             <Route path="/bookings" element={<Bookings />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/analytics" element={<LogisticsDashboard />} />
+            <Route path="/home/driver" element={<DriverHome />} />
+            {/*<Route path="booking/new" element={<CreateNewBooking />}/>*/}
+            {/*<Route path="booking/:bookingId/location" element={<BookingLiveLocation />} />*/}
           </Routes>
         </main>
       </div>
