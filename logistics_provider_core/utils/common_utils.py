@@ -20,5 +20,7 @@ def model_to_dict(instance, fields=None):
         value = getattr(instance, field.name)
         if isinstance(value, timezone.datetime):
             value = value.isoformat()
+        elif hasattr(value, '_meta'):
+            value = model_to_dict(value)
         data[field.name] = value
     return data
