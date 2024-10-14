@@ -3,9 +3,9 @@ from logistics_provider_core.models import Booking, Driver, LogisticAccountUser,
 
 
 class DriverActionStorage:
-    def has_ongoing_delivery(self, user_id: int) -> bool:
+    def has_ongoing_delivery(self, driver_id: int) -> bool:
         ongoing_statuses = [BookingStatus.ACCEPTED.value, BookingStatus.EN_ROUTE.value, BookingStatus.PICKED_UP.value]
-        return Booking.objects.filter(user_id=user_id, status__in=ongoing_statuses).exists()
+        return Booking.objects.filter(driver_id=driver_id, status__in=ongoing_statuses).exists()
 
     def is_booking_available_to_pick(self, booking_id: int) -> bool:
         return not Booking.objects.filter(id=booking_id, status=BookingStatus.PENDING.value).exists()

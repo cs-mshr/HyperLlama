@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface Booking {
   id: number;
@@ -35,6 +36,7 @@ interface DriverData {
 const DriverHome: React.FC = () => {
   const [driverData, setDriverData] = useState<DriverData | null>(null);
   const [acceptedBooking, setAcceptedBooking] = useState<Booking | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDriverData = async () => {
@@ -91,6 +93,12 @@ const DriverHome: React.FC = () => {
           </div>
         ))}
       </div>
+      <button
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-6"
+        onClick={() => navigate('/bookings/available')}
+      >
+        Show Available Bookings
+      </button>
     </div>
   );
 };

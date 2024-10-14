@@ -1,4 +1,5 @@
 from logistics_provider_core.constants import BookingStatus
+from logistics_provider_core.models import Driver, LogisticAccountUser
 from logistics_provider_core.storages.driver_action_storage import DriverActionStorage
 from logistics_provider_core.exceptions import DriverHaveOngoingDelivery, BookingAlreadyPicked
 
@@ -8,7 +9,9 @@ class AcceptBookingRequest:
         self.driver_action_storage = driver_action_storage
 
     def accept_booking_request(self, user_id:int, booking_id:int):
-        have_on_going_delivery = self.driver_action_storage.has_ongoing_delivery(user_id=user_id)
+        logistics_user = LogisticAccountUser.objects.get(user_id=user_id)
+        driver_id = Driver.objects.get(user=logistics_user).id
+        have_on_going_delivery = self.driver_action_storage.has_ongoing_delivery(driver_id=driver_id)
         if have_on_going_delivery:
             raise DriverHaveOngoingDelivery()
 

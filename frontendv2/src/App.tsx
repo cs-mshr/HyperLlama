@@ -26,8 +26,8 @@ function App() {
             <Route path="/bookings" element={<Bookings />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/analytics" element={<LogisticsDashboard />} />
-            <Route path="/home/driver" element={<DriverHome />} />
             <Route path="booking/new" element={<CreateNewBooking />}/>
+            <Route path="/home/driver" element={<DriverHome />} />
             <Route path="/bookings/available" element={<AvailableBookings />}/>
             <Route path="/register/driver" element={<RegisterDriver />} />
             {/*<Route path="booking/:bookingId/location" element={<BookingLiveLocation />} />*/}
