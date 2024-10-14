@@ -9,6 +9,8 @@ import Profile from './pages/Profile';
 import LogisticsDashboard from "./pages/AnalyticsPage";
 import DriverHome from "./pages/DriverHome.tsx";
 import CreateNewBooking from "./pages/CreateNewBooking.tsx";
+import AvailableBookings from "./pages/AvailableBookings.tsx";
+import RegisterDriver from "./pages/RegisterDriver.tsx";
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
             <Route path="/analytics" element={<LogisticsDashboard />} />
             <Route path="/home/driver" element={<DriverHome />} />
             <Route path="booking/new" element={<CreateNewBooking />}/>
+            <Route path="/bookings/available" element={<AvailableBookings />}/>
+            <Route path="/register/driver" element={<RegisterDriver />} />
             {/*<Route path="booking/:bookingId/location" element={<BookingLiveLocation />} />*/}
           </Routes>
         </main>

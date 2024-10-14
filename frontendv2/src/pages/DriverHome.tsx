@@ -11,106 +11,102 @@ interface Booking {
   estimated_price: string;
 }
 
+interface DriverProfile {
+  id: number;
+  user: number;
+  vehicle: string | null;
+  license_number: string;
+  current_location: string;
+}
+
+interface Feedback {
+  id: number;
+  booking: number;
+  rating: number;
+  comment: string;
+}
+
+interface DriverData {
+  driver: DriverProfile;
+  bookings: Booking[];
+  feedbacks: Feedback[];
+}
+
 const DriverHome: React.FC = () => {
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [driverData, setDriverData] = useState<DriverData | null>(null);
+  const [acceptedBooking, setAcceptedBooking] = useState<Booking | null>(null);
 
   useEffect(() => {
-    const fetchBookings = async () => {
+    const fetchDriverData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://127.0.0.1:8000/logistics/driver/bookings/available/', {
+        const response = await axios.get('http://127.0.0.1:8000/logistics/driver/profile/', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setBookings(response.data);
+        setDriverData(response.data);
+
+        const accepted = response.data.bookings.find((booking: Booking) => booking.status === 'ACCEPTED');
+        setAcceptedBooking(accepted || null);
       } catch (error) {
-        console.error('Error fetching bookings:', error);
+        console.error('Error fetching driver data:', error);
       }
     };
 
-    fetchBookings();
+    fetchDriverData();
   }, []);
 
-  const handleAccept = async (bookingId: number) => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.post(`http://127.0.0.1:8000/logistics/driver/bookings/${bookingId}/accept/`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setBookings((prevBookings) =>
-        prevBookings.map((booking) =>
-          booking.id === bookingId ? { ...booking, status: 'ACCEPTED' } : booking
-        )
-      );
-    } catch (error) {
-      console.error('Error accepting booking:', error);
-    }
-  };
+  if (!driverData) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6 text-royal-blue">Available Bookings</h1>
-      <div className="overflow-x-auto">
-        <table className="w-full bg-white shadow-md rounded-lg">
-          <thead className="bg-royal-blue text-white">
-            <tr>
-              <th className="py-3 px-4 text-left">ID</th>
-              <th className="py-3 px-4 text-left">Pickup</th>
-              <th className="py-3 px-4 text-left">Dropoff</th>
-              <th className="py-3 px-4 text-left">Vehicle</th>
-              <th className="py-3 px-4 text-left">Scheduled Time</th>
-              <th className="py-3 px-4 text-left">Status</th>
-              <th className="py-3 px-4 text-left">Price</th>
-              <th className="py-3 px-4 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {bookings.map((booking) => (
-              <tr key={booking.id} className="border-b hover:bg-gray-50">
-                <td className="py-3 px-4">{booking.id}</td>
-                <td className="py-3 px-4">{booking.pickup_location}</td>
-                <td className="py-3 px-4">{booking.dropoff_location}</td>
-                <td className="py-3 px-4">{booking.vehicle_type}</td>
-                <td className="py-3 px-4">{new Date(booking.scheduled_time).toLocaleString()}</td>
-                <td className="py-3 px-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(booking.status)}`}>
-                    {booking.status}
-                  </span>
-                </td>
-                <td className="py-3 px-4">${booking.estimated_price}</td>
-                <td className="py-3 px-4">
-                  {booking.status === 'PENDING' && (
-                    <button
-                      className="bg-green-500 text-white px-4 py-2 rounded"
-                      onClick={() => handleAccept(booking.id)}
-                    >
-                      Accept
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <h1 className="text-3xl font-bold mb-6 text-royal-blue">Driver Profile</h1>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold">Driver Information</h2>
+        <p>ID: {driverData.driver.id}</p>
+        <p>License Number: {driverData.driver.license_number}</p>
+        <p>Current Location: {driverData.driver.current_location}</p>
+      </div>
+      {acceptedBooking ? (
+        <div>
+          <h2 className="text-2xl font-bold">Accepted Booking</h2>
+          <BookingDetails booking={acceptedBooking} />
+        </div>
+      ) : (
+        <div>
+          <h2 className="text-2xl font-bold">Other Bookings</h2>
+          {driverData.bookings.map((booking) => (
+            <BookingDetails key={booking.id} booking={booking} />
+          ))}
+        </div>
+      )}
+      <div className="mt-6">
+        <h2 className="text-2xl font-bold">Feedbacks</h2>
+        {driverData.feedbacks.map((feedback) => (
+          <div key={feedback.id} className="mb-4">
+            <p>Booking ID: {feedback.booking}</p>
+            <p>Rating: {feedback.rating}</p>
+            <p>Comment: {feedback.comment}</p>
+          </div>
+        ))}
       </div>
     </div>
   );
 };
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'PENDING':
-      return 'bg-yellow-200 text-yellow-800';
-    case 'ACCEPTED':
-      return 'bg-blue-200 text-blue-800';
-    case 'EN_ROUTE':
-      return 'bg-purple-200 text-purple-800';
-    case 'DELIVERED':
-      return 'bg-green-200 text-green-800';
-    case 'CANCELLED':
-      return 'bg-red-200 text-red-800';
-    default:
-      return 'bg-gray-200 text-gray-800';
-  }
+const BookingDetails: React.FC<{ booking: Booking }> = ({ booking }) => {
+  return (
+    <div className="mb-4 p-4 border rounded shadow">
+      <p>ID: {booking.id}</p>
+      <p>Pickup Location: {booking.pickup_location}</p>
+      <p>Dropoff Location: {booking.dropoff_location}</p>
+      <p>Vehicle Type: {booking.vehicle_type}</p>
+      <p>Scheduled Time: {new Date(booking.scheduled_time).toLocaleString()}</p>
+      <p>Status: {booking.status}</p>
+      <p>Estimated Price: ${booking.estimated_price}</p>
+    </div>
+  );
 };
 
 export default DriverHome;

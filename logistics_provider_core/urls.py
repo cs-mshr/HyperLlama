@@ -16,7 +16,7 @@ urlpatterns = [
 
 
 
-    path('dirver/register', views.register_driver, name='register_driver'),
+    path('driver/register', views.register_driver, name='register_driver'),
     path('driver/bookings/available/', views.list_available_booking_requests, name='list_available_booking_requests'),
     path('driver/bookings/<int:booking_id>/', views.get_booking_request_details, name='get_booking_request_details'),
     path('driver/bookings/<int:booking_id>/accept/', views.accept_booking_request, name='accept_booking_request'),

@@ -324,10 +324,8 @@ def get_current_active_booking(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_driver_profile(request):
-    serializer = GetDriverDetailsRequestSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-
     try:
+
         from logistics_provider_core.interactors.get_driver_details import (
             GetDriverDetails,
         )
@@ -337,8 +335,9 @@ def get_driver_profile(request):
 
         driver_action_storage = DriverActionStorage()
         interactor = GetDriverDetails(driver_action_storage=driver_action_storage)
+        driver_id = Driver.objects.get(user__user=request.user).id
         response_data = interactor.get_driver_profile_details(
-            driver_id=request.data["driver_id"]
+            driver_id=driver_id
         )
         return Response(response_data)
     except Exception as e:
