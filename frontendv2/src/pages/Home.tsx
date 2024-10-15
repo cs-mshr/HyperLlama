@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface UserData {
     id: number;
@@ -31,6 +32,7 @@ interface ProfileData {
 
 const Profile: React.FC = () => {
     const [profileData, setProfileData] = useState<ProfileData | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProfileData = async () => {
@@ -74,6 +76,14 @@ const Profile: React.FC = () => {
                         <p><strong>Scheduled Time:</strong> {new Date(booking.scheduled_time).toLocaleString()}</p>
                         <p><strong>Estimated Price:</strong> ${booking.estimated_price}</p>
                         <p><strong>Actual Price:</strong> {booking.actual_price ? `$${booking.actual_price}` : 'N/A'}</p>
+                        {booking.status === 'EN_ROUTE' && (
+                            <button
+                                onClick={() => navigate(`/booking/${booking.booking_id}/driver-location`)}
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            >
+                                View Driver Location
+                            </button>
+                        )}
                     </div>
                 ))}
             </div>
