@@ -67,8 +67,23 @@ def create_booking(request):
 
     user_action_storage = UserActionStorage()
     interactor = CreateBooking(user_action_storage=user_action_storage)
+    pickup_location = Location(
+        latitude=request.data["pickup_location"]["latitude"],
+        longitude=request.data["pickup_location"]["longitude"],
+    )
+    dropoff_location = Location(
+        latitude=request.data["dropoff_location"]["latitude"],
+        longitude=request.data["dropoff_location"]["longitude"],
+    )
     booking_req_dto = CreateBookingDTO(
-        **serializer.validated_data, user_id=request.user.id
+        user_id=request.user.id,
+        vehicle_type=request.data["vehicle_type"],
+        pickup_location=pickup_location,
+        dropoff_location=dropoff_location,
+        scheduled_time=request.data["scheduled_time"],
+        status=request.data.get("status", "PENDING"),
+        driver_id=request.data.get("driver_id"),
+        estimated_price=request.data.get("estimated_price")
     )
 
     try:
@@ -337,9 +352,7 @@ def get_driver_profile(request):
         interactor = GetDriverDetails(driver_action_storage=driver_action_storage)
         logistics_user = LogisticAccountUser.objects.get(user=request.user)
         driver_id = Driver.objects.get(user=logistics_user).id
-        response_data = interactor.get_driver_profile_details(
-            driver_id=driver_id
-        )
+        response_data = interactor.get_driver_profile_details(driver_id=driver_id)
         return Response(response_data)
     except Exception as e:
         response_data = {"error": str(e), "stack_trace": traceback.format_exc()}

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import LocationMap from '../components/LocationMap';
+import {MapContainer} from "react-leaflet";
 
 interface LocationData {
   latitude: number;
@@ -9,6 +11,7 @@ interface LocationData {
 
 const SendBookingLiveLocation: React.FC = () => {
   const [locationData, setLocationData] = useState<LocationData[]>([]);
+  const [currentLocation, setCurrentLocation] = useState<LocationData | null>(null);
 
   useEffect(() => {
     const sendLocationUpdate = async (latitude: number, longitude: number) => {
@@ -31,8 +34,11 @@ const SendBookingLiveLocation: React.FC = () => {
       const { latitude, longitude } = position.coords;
       const timestamp = position.timestamp;
 
+      const newLocation = { latitude, longitude, timestamp };
+      setCurrentLocation(newLocation);
+
       setLocationData((prevData) => {
-        const newData = [{ latitude, longitude, timestamp }, ...prevData];
+        const newData = [newLocation, ...prevData];
         return newData.slice(0, 10);
       });
 
@@ -83,6 +89,14 @@ const SendBookingLiveLocation: React.FC = () => {
           ))}
         </ul>
       </div>
+      {currentLocation && (
+        <div>
+          <h2 className="text-2xl font-bold mb-4">Current Location</h2>
+        <MapContainer center={[currentLocation.latitude, currentLocation.longitude]} zoom={13} style={{ height: '400px', width: '100%' }}>
+          <LocationMap location={{ latitude: currentLocation.latitude, longitude: currentLocation.longitude }} />
+        </MapContainer>
+        </div>
+      )}
     </div>
   );
 };

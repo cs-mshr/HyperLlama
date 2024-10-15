@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import SelectableMap from '../components/SelectableMap';
 
 const CreateNewBooking: React.FC = () => {
-  const [pickupLocation, setPickupLocation] = useState('');
-  const [dropoffLocation, setDropoffLocation] = useState('');
+  const [pickupLocation, setPickupLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [dropoffLocation, setDropoffLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [vehicleType, setVehicleType] = useState('CAR');
   const [scheduledTime, setScheduledTime] = useState('');
   const navigate = useNavigate();
@@ -40,27 +41,23 @@ const CreateNewBooking: React.FC = () => {
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="pickupLocation">
             Pickup Location
           </label>
-          <input
-            id="pickupLocation"
-            type="text"
-            value={pickupLocation}
-            onChange={(e) => setPickupLocation(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          />
+          <SelectableMap onLocationSelect={(lat, lng) => setPickupLocation({ latitude: lat, longitude: lng })} />
+          {pickupLocation && (
+            <p>
+              Selected Pickup Location: Latitude: {pickupLocation.latitude}, Longitude: {pickupLocation.longitude}
+            </p>
+          )}
         </div>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="dropoffLocation">
             Dropoff Location
           </label>
-          <input
-            id="dropoffLocation"
-            type="text"
-            value={dropoffLocation}
-            onChange={(e) => setDropoffLocation(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          />
+          <SelectableMap onLocationSelect={(lat, lng) => setDropoffLocation({ latitude: lat, longitude: lng })} />
+          {dropoffLocation && (
+            <p>
+              Selected Dropoff Location: Latitude: {dropoffLocation.latitude}, Longitude: {dropoffLocation.longitude}
+            </p>
+          )}
         </div>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="vehicleType">

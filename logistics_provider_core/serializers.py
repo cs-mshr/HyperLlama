@@ -13,8 +13,8 @@ from .models import (
 
 
 class CreateBookingRequestSerializer(serializers.Serializer):
-    pickup_location = serializers.CharField(max_length=255)
-    dropoff_location = serializers.CharField(max_length=255)
+    pickup_location = serializers.DictField(child=serializers.FloatField())
+    dropoff_location = serializers.DictField(child=serializers.FloatField())
     vehicle_type = serializers.ChoiceField(choices=Vehicle.VEHICLE_TYPES)
     scheduled_time = serializers.DateTimeField()
 

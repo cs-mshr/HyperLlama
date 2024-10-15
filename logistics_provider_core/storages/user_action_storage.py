@@ -1,4 +1,5 @@
 # python
+import json
 from dataclasses import dataclass
 from datetime import datetime
 from typing import List, Optional
@@ -8,6 +9,7 @@ from django.contrib.auth.models import User
 from logistics_provider_core.models import Booking, LogisticAccountUser, Driver
 from logistics_provider_core.storages.dtos import BookingData, BookingDTO, UserProfileDTO, UserData
 from logistics_provider_core.storages.dtos import CreateBookingDTO
+from logistics_provider_core.utils.common_utils import dto_to_dict
 
 
 class UserActionStorage:
@@ -37,12 +39,19 @@ class UserActionStorage:
 
     def create_booking(self, create_booking_dto: CreateBookingDTO) -> BookingData:
         user = LogisticAccountUser.objects.get(user__id=create_booking_dto.user_id)
-
+        pickup_dict_str = json.dumps({
+            "latitude":create_booking_dto.pickup_location.latitude,
+            "longitude":create_booking_dto.pickup_location.longitude
+        })
+        dropoff_dict_str = json.dumps({
+            "latitude":create_booking_dto.pickup_location.latitude,
+            "longitude":create_booking_dto.pickup_location.longitude
+        })
         booking = Booking.objects.create(
             user=user,
             vehicle_type=create_booking_dto.vehicle_type,
-            pickup_location=create_booking_dto.pickup_location,
-            dropoff_location=create_booking_dto.dropoff_location,
+            pickup_location=pickup_dict_str,
+            dropoff_location=dropoff_dict_str,
             scheduled_time=create_booking_dto.scheduled_time,
             estimated_price=create_booking_dto.estimated_price,
             status=create_booking_dto.status,

@@ -1,16 +1,66 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// Fix for default marker icon issue with Webpack
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+let DefaultIcon = L.icon({
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
 
 interface Location {
   latitude: number;
   longitude: number;
 }
 
+const LocationMap: React.FC<{ location: Location }> = ({ location }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    map.setView([location.latitude, location.longitude], 13);
+  }, [location, map]);
+
+  return (
+    <>
+      <TileLayer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      />
+      <Marker position={[location.latitude, location.longitude]}>
+        <Popup>
+          Latitude: {location.latitude}, Longitude: {location.longitude}
+        </Popup>
+      </Marker>
+    </>
+  );
+};
+
 const RecieveBookingLiveLocation: React.FC = () => {
   const { bookingId } = useParams<{ bookingId: string }>();
   const [location, setLocation] = useState<Location | null>(null);
   const [driverId, setDriverId] = useState<number | null>(null);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      },
+      (error) => {
+        console.error('Error getting user location:', error);
+      }
+    );
+  }, []);
 
   useEffect(() => {
     const fetchDriverId = async () => {
@@ -61,10 +111,9 @@ const RecieveBookingLiveLocation: React.FC = () => {
     <div>
       <h1 className="text-3xl font-bold mb-6 text-royal-blue">Driver Live Location</h1>
       {location ? (
-        <div>
-          <p>Latitude: {location.latitude}</p>
-          <p>Longitude: {location.longitude}</p>
-        </div>
+        <MapContainer center={[location.latitude, location.longitude]} zoom={13} style={{ height: '400px', width: '100%' }}>
+          <LocationMap location={location} />
+        </MapContainer>
       ) : (
         <p>Loading location...</p>
       )}
