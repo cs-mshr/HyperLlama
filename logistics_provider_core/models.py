@@ -55,6 +55,7 @@ class Trip(models.Model):
     distance = models.FloatField(null=True, blank=True, help_text="Distance in km")
 
 class Location(models.Model):
+    name = models.CharField(max_length=5, choices=Vehicle.VEHICLE_TYPES, blank=True, null=True)
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name='locations')
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
