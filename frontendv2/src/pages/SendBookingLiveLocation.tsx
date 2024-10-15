@@ -78,7 +78,7 @@ const SendBookingLiveLocation: React.FC = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6 text-royal-blue">Live Location Tracking</h1>
+      <h1 className="text-3xl font-bold mb-6 text-royal-blue">Live Location Sharing</h1>
       <div className="mb-6">
         <h2 className="text-2xl font-bold">Latest 10 Location Updates</h2>
         <ul>

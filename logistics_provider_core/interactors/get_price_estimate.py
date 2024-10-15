@@ -16,7 +16,7 @@ class GetPriceEstimate:
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
         return R * c
 
-    def get_price_estimate(self, price_estimate_req_dto: PriceEstimationReqDTO):
+    def get_price_estimate(self, price_estimate_req_dto: PriceEstimationReqDTO) -> float:
         base_fare = 50  # Dynamic base fare
         per_kilometer_charge = 100
 
