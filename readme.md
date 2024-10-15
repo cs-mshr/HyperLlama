@@ -6,24 +6,17 @@
 
 ## Setup
 
-1. **Install Python 3.12:**
-    - **Linux:**
-        ```sh
-        sudo apt update
-        sudo apt install -y python3.12 python3.12-venv python3.12-dev
-        ```
-
-2. **Create a virtual environment:**
+1. **Create a virtual environment:**
     ```sh
-    virtualenv env --python=python3.12
+    virtualenv env
     ```
 
-3. **Activate the virtual environment:**
+2. **Activate the virtual environment:**
     ```sh
     source env/bin/activate
     ```
 
-4. **Install dependencies:**
+3. **Install dependencies:**
     ```sh
     pip install -r requirements.txt
     ```
