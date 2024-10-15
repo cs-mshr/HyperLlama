@@ -8,6 +8,7 @@ const CreateNewBooking: React.FC = () => {
   const [dropoffLocation, setDropoffLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [vehicleType, setVehicleType] = useState('CAR');
   const [scheduledTime, setScheduledTime] = useState('');
+  const [estimatedPrice, setEstimatedPrice] = useState<number | null>(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -30,6 +31,28 @@ const CreateNewBooking: React.FC = () => {
       navigate('/bookings');
     } catch (error) {
       console.error('Error creating booking:', error);
+    }
+  };
+
+  const handleGetPriceEstimate = async () => {
+    if (!pickupLocation || !dropoffLocation) {
+      alert('Please select both pickup and dropoff locations.');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post('http://127.0.0.1:8000/logistics/price-estimate/', {
+        pickup_location: `${pickupLocation.latitude},${pickupLocation.longitude}`,
+        dropoff_location: `${dropoffLocation.latitude},${dropoffLocation.longitude}`,
+        vehicle_type: vehicleType,
+      }, {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setEstimatedPrice(response.data.estimated_price);
+    } catch (error) {
+      console.error('Error getting price estimate:', error);
     }
   };
 
@@ -95,7 +118,19 @@ const CreateNewBooking: React.FC = () => {
           >
             Create Booking
           </button>
+          <button
+            type="button"
+            onClick={handleGetPriceEstimate}
+            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Get Price Estimate
+          </button>
         </div>
+        {estimatedPrice !== null && (
+          <div className="mt-4">
+            <p className="text-gray-700 text-sm font-bold">Estimated Price: ${estimatedPrice}</p>
+          </div>
+        )}
       </form>
     </div>
   );

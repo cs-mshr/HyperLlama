@@ -29,7 +29,7 @@ from logistics_provider_core.constants import (
 )
 from django.http import JsonResponse
 from .celery_handlers import process_location_update
-from .storages.dtos import UpdateUserDetailsReqDTO, UpdateDriverProfileReqDTO
+from .storages.dtos import UpdateUserDetailsReqDTO, UpdateDriverProfileReqDTO, LocationDTO
 from allauth.account.signals import user_signed_up
 
 
@@ -67,11 +67,11 @@ def create_booking(request):
 
     user_action_storage = UserActionStorage()
     interactor = CreateBooking(user_action_storage=user_action_storage)
-    pickup_location = Location(
+    pickup_location = LocationDTO(
         latitude=request.data["pickup_location"]["latitude"],
         longitude=request.data["pickup_location"]["longitude"],
     )
-    dropoff_location = Location(
+    dropoff_location = LocationDTO(
         latitude=request.data["dropoff_location"]["latitude"],
         longitude=request.data["dropoff_location"]["longitude"],
     )
@@ -137,7 +137,21 @@ def get_price_estimate(request):
     interactor = GetPriceEstimate(user_action_storage=user_action_storage)
 
     try:
-        price_estimate_req_dto = PriceEstimationReqDTO(**serializer.validated_data)
+        pickup_location = request.data["pickup_location"].split(',')
+        dropoff_location = request.data["dropoff_location"].split(',')
+        pickup_location_dto = LocationDTO(
+            latitude=float(pickup_location[0]),
+            longitude=float(pickup_location[1]),
+        )
+        dropoff_location_dto = LocationDTO(
+            latitude=float(dropoff_location[0]),
+            longitude=float(dropoff_location[1]),
+        )
+        price_estimate_req_dto = PriceEstimationReqDTO(
+            pickup_location=pickup_location_dto,
+            dropoff_location=dropoff_location_dto,
+            vehicle_type=request.data["vehicle_type"]
+        )
         estimated_price = interactor.get_price_estimate(
             price_estimate_req_dto=price_estimate_req_dto
         )

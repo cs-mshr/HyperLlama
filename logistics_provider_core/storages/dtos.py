@@ -26,7 +26,7 @@ class UserData:
     is_driver: bool
 
 @dataclass
-class Location:
+class LocationDTO:
     latitude: float
     longitude: float
 
@@ -34,8 +34,8 @@ class Location:
 class CreateBookingDTO:
     user_id: int
     vehicle_type: str
-    pickup_location: Location
-    dropoff_location: Location
+    pickup_location: LocationDTO
+    dropoff_location: LocationDTO
     scheduled_time: datetime
     status: str = 'PENDING'
     driver_id: int = None
@@ -43,8 +43,8 @@ class CreateBookingDTO:
 
 @dataclass
 class PriceEstimationReqDTO:
-    pickup_location: str
-    dropoff_location: str
+    pickup_location: LocationDTO
+    dropoff_location: LocationDTO
     vehicle_type: str
 
 @dataclass
